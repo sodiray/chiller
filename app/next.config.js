@@ -43,7 +43,10 @@ module.exports = withBundleAnalyzer({
     esmExternals: false,
   },
   async redirects() {
-    return require('./redirects.json')
+    return [
+      { "source": "/", "destination": "/docs", "permanent": false },
+      { "source": "/docs", "destination": "/docs/installation", "permanent": false },
+    ]
   },
   webpack(config, options) {
     config.module.rules.push({
@@ -93,10 +96,10 @@ module.exports = withBundleAnalyzer({
             example:
               Object.keys(utilities).length > 0
                 ? Object.keys(utilities)
-                    [Math.floor((Object.keys(utilities).length - 1) / 2)].split(/[>:]/)[0]
-                    .trim()
-                    .substr(1)
-                    .replace(/\\/g, '')
+                [Math.floor((Object.keys(utilities).length - 1) / 2)].split(/[>:]/)[0]
+                  .trim()
+                  .substr(1)
+                  .replace(/\\/g, '')
                 : undefined,
           }
         })
@@ -173,17 +176,17 @@ module.exports = withBundleAnalyzer({
           plugins === null
             ? {}
             : {
-                remarkPlugins: [
-                  withPrevalInstructions,
-                  withExamples,
-                  withTableOfContents,
-                  withSyntaxHighlighting,
-                  withNextLinks,
-                  withSmartQuotes,
-                  ...plugins,
-                ],
-                rehypePlugins: [withLinkRoles],
-              },
+              remarkPlugins: [
+                withPrevalInstructions,
+                withExamples,
+                withTableOfContents,
+                withSyntaxHighlighting,
+                withNextLinks,
+                withSmartQuotes,
+                ...plugins,
+              ],
+              rehypePlugins: [withLinkRoles],
+            },
       },
       createLoader(function (source) {
         let pathSegments = this.resourcePath.split(path.sep)
@@ -372,9 +375,9 @@ function getUtilities(plugin, { includeNegativeValues = false } = {}) {
   }
 
   plugin({
-    addBase: () => {},
-    addDefaults: () => {},
-    addComponents: () => {},
+    addBase: () => { },
+    addDefaults: () => { },
+    addComponents: () => { },
     corePlugins: () => true,
     prefix: (x) => x,
     config: (option, defaultValue) => (option ? defaultValue : { future: {} }),

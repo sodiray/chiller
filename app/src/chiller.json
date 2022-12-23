@@ -38,18 +38,8 @@
       {
         "label": "Getting Started",
         "pages": [
-          "getting-started",
-          "packages",
-          "root-hooks",
-          "hooks",
-          "init-hooks"
-        ]
-      },
-      {
-        "label": "Packages",
-        "pages": [
-          "core-concepts",
-          "writing-hooks"
+          "installation",
+          "core-concepts"
         ]
       }
     ]

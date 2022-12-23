@@ -146,13 +146,9 @@ function Nav({
       className="lg:text-sm lg:leading-6 relative"
     >
       <div className="sticky top-0 -ml-0.5 pointer-events-none">
-        {!mobile && <div className="h-10 bg-white dark:bg-slate-900" />}
-        <div className="bg-white dark:bg-slate-900 relative pointer-events-auto">
+        <div className="bg-white my-8 dark:bg-slate-900 relative pointer-events-auto">
           <DynamicSearchButton />
         </div>
-        {!mobile && (
-          <div className="h-8 bg-gradient-to-b from-white dark:from-slate-900" />
-        )}
       </div>
       <ul>
         <TopLevelNav mobile={mobile} />
@@ -262,7 +258,7 @@ const DynamicSearchButton = () => {
   return (
     <div
       onClick={focus}
-      className="flex p-2 items-center rounded border border-slate-200 hover:border-slate-300"
+      className="flex p-2 items-center rounded border border-slate-200 dark:border-none hover:border-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700"
     >
       <svg
         width="24"
@@ -289,7 +285,7 @@ const DynamicSearchButton = () => {
         />
       </svg>
       <input
-        className="grow w-full"
+        className="grow w-full bg-transparent"
         type="text"
         onChange={handleChange}
         placeholder="Quick search..."

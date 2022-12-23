@@ -8,50 +8,7 @@ import { useEffect, useState } from 'react'
 import clsx from 'clsx'
 import { ThemeSelect, ThemeToggle } from './ThemeToggle'
 import config from 'src/config'
-
-function Featured() {
-  return (
-    <Link href="/blog/tailwindcss-v3-2">
-      <a className="ml-3 text-xs leading-5 font-medium text-sky-600 dark:text-sky-400 bg-sky-400/10 rounded-full py-1 px-3 hidden xl:flex items-center hover:bg-sky-400/20">
-        <strong className="font-semibold">Tailwind CSS v3.2</strong>
-        <svg
-          width="2"
-          height="2"
-          fill="currentColor"
-          aria-hidden="true"
-          className="ml-2 text-sky-600 dark:text-sky-400/70"
-        >
-          <circle
-            cx="1"
-            cy="1"
-            r="1"
-          />
-        </svg>
-        <span className="ml-2 min-[1372px]:hidden">
-          Dynamic breakpoints, container queries, and more
-        </span>
-        <span className="ml-2 hidden min-[1372px]:inline">
-          Dynamic breakpoints, multi-config, container queries, and more
-        </span>
-        <svg
-          width="3"
-          height="6"
-          className="ml-3 overflow-visible text-sky-300 dark:text-sky-400"
-          aria-hidden="true"
-        >
-          <path
-            d="M0 0L3 3L0 6"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </a>
-    </Link>
-  )
-}
+import { Icon } from './Icon'
 
 export function NavPopover({
   display = 'md:hidden',
@@ -130,14 +87,6 @@ export function NavPopover({
           </button>
           <ul className="space-y-6">
             <NavItems />
-            <li>
-              <a
-                href="https://github.com/tailwindlabs/tailwindcss"
-                className="hover:text-sky-500 dark:hover:text-sky-400"
-              >
-                GitHub
-              </a>
-            </li>
           </ul>
           <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-200/10">
             <ThemeSelect />
@@ -148,15 +97,63 @@ export function NavPopover({
   )
 }
 
+const DynamicNavLink = ({
+  link
+}: {
+  link: { url: string; label?: string; button?: 'round-xl'; icon?: 'github' }
+}) => {
+  if (link.url.startsWith('/')) {
+    if (link.label) {
+      return (
+        <a
+          href="/docs/installation"
+          target="_blank"
+        >
+          <a className="hover:text-sky-500 dark:hover:text-sky-400">
+            {link.label}
+          </a>
+        </a>
+      )
+    }
+    if (link.icon) {
+      return (
+        <a
+          href="/docs/installation"
+          target="_blank"
+        >
+          <Icon icon={link.icon} />
+        </a>
+      )
+    }
+  }
+  if (link.label) {
+    return (
+      <Link href="/docs/installation">
+        <a className="hover:text-sky-500 dark:hover:text-sky-400">
+          {link.label}
+        </a>
+      </Link>
+    )
+  }
+  if (link.icon) {
+    return (
+      <Link href="/docs/installation">
+        <a className="hover:text-sky-500 dark:hover:text-sky-400">
+          <Icon icon={link.icon} />
+        </a>
+      </Link>
+    )
+  }
+  return null
+}
+
 export function NavItems() {
   return (
     <>
       {config.header.links.map(link => (
         <>
           <li>
-            <Link href="/docs/installation">
-              <a className="hover:text-sky-500 dark:hover:text-sky-400">{link.label}</a>
-            </Link>
+            <DynamicNavLink link={link} />
           </li>
         </>
       ))}
@@ -217,20 +214,15 @@ export function Header({
           >
             <div className="relative flex items-center">
               <Link href="/">
-                <a
-                  className="mr-3 flex-none w-[2.0625rem] overflow-hidden md:w-auto"
-                  onContextMenu={e => {
-                    e.preventDefault()
-                    Router.push('/brand')
-                  }}
-                >
-                  <span className="sr-only">Tailwind CSS home page</span>
+                <a className="mr-3 flex-none w-[2.0625rem] overflow-hidden md:w-auto">
+                  <span className="sr-only">{config.name}</span>
                   <Logo className="w-auto h-5" />
                 </a>
               </Link>
-              <VersionSwitcher />
-              <Featured />
-              <div className="relative hidden lg:flex items-center ml-auto">
+              {config.versions && (
+                <VersionSwitcher />
+              )}
+              <div className="relative hidden lg:flex items-center ml-auto justify-end w-full">
                 <nav className="text-sm leading-6 font-semibold text-slate-700 dark:text-slate-200">
                   <ul className="flex space-x-8">
                     <NavItems />
@@ -238,46 +230,14 @@ export function Header({
                 </nav>
                 <div className="flex items-center border-l border-slate-200 ml-6 pl-6 dark:border-slate-800">
                   <ThemeToggle panelClassName="mt-8" />
-                  <a
-                    href="https://github.com/tailwindlabs/tailwindcss"
-                    className="ml-6 block text-slate-400 hover:text-slate-500 dark:hover:text-slate-300"
-                  >
-                    <span className="sr-only">Tailwind CSS on GitHub</span>
-                    <svg
-                      viewBox="0 0 16 16"
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
-                    </svg>
-                  </a>
                 </div>
               </div>
-              <SearchButton className="ml-auto text-slate-500 w-8 h-8 -my-1 flex items-center justify-center hover:text-slate-600 lg:hidden dark:text-slate-400 dark:hover:text-slate-300">
-                <span className="sr-only">Search</span>
-                <svg
-                  width="24"
-                  height="24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="m19 19-3.5-3.5" />
-                  <circle
-                    cx="11"
-                    cy="11"
-                    r="6"
-                  />
-                </svg>
-              </SearchButton>
-              <NavPopover
-                className="ml-2 -my-1"
-                display="lg:hidden"
-              />
+              <div className="flex justify-end w-full lg:hidden">
+                <NavPopover
+                  className="-my-1"
+                  display="lg:hidden"
+                />
+              </div>
             </div>
           </div>
           {hasNav && (

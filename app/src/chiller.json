@@ -17,13 +17,13 @@
   "header": {
     "links": [
       {
-        "url": "https://github.com/rayepps/chiller",
-        "icon": "github"
-      },
-      {
         "url": "https://chiller.voter",
         "label": "Vote",
         "button": "round-xl"
+      },
+      {
+        "url": "https://github.com/rayepps/chiller",
+        "icon": "github"
       }
     ]
   },

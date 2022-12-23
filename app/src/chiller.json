@@ -30,8 +30,19 @@
   "sidebar": {
     "links": [
       {
+        "url": "/docs",
+        "icon": "book",
+        "label": "Documentation"
+      },
+      {
         "url": "https://github.com/rayepps/chiller/discussion",
-        "icon": "book"
+        "icon": "code",
+        "label": "Playground"
+      },
+      {
+        "url": "https://github.com/rayepps/chiller/discussion",
+        "icon": "chat",
+        "label": "Discussion"
       }
     ],
     "groups": [
@@ -45,7 +56,7 @@
     ]
   },
   "search": {
-    "strategy": "algolia | pages",
+    "type": "pages",
     "key": "....."
   },
   "versions": {

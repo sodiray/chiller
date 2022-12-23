@@ -7,6 +7,7 @@ import { Dialog } from '@headlessui/react'
 import { useEffect, useState } from 'react'
 import clsx from 'clsx'
 import { ThemeSelect, ThemeToggle } from './ThemeToggle'
+import config from 'src/config'
 
 function Featured() {
   return (
@@ -20,7 +21,11 @@ function Featured() {
           aria-hidden="true"
           className="ml-2 text-sky-600 dark:text-sky-400/70"
         >
-          <circle cx="1" cy="1" r="1" />
+          <circle
+            cx="1"
+            cy="1"
+            r="1"
+          />
         </svg>
         <span className="ml-2 min-[1372px]:hidden">
           Dynamic breakpoints, container queries, and more
@@ -48,7 +53,14 @@ function Featured() {
   )
 }
 
-export function NavPopover({ display = 'md:hidden', className, ...props }) {
+export function NavPopover({
+  display = 'md:hidden',
+  className,
+  ...props
+}: {
+  display?: string
+  className: string
+}) {
   let [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
@@ -63,14 +75,22 @@ export function NavPopover({ display = 'md:hidden', className, ...props }) {
   }, [isOpen])
 
   return (
-    <div className={clsx(className, display)} {...props}>
+    <div
+      className={clsx(className, display)}
+      {...props}
+    >
       <button
         type="button"
         className="text-slate-500 w-8 h-8 flex items-center justify-center hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300"
         onClick={() => setIsOpen(true)}
       >
         <span className="sr-only">Navigation</span>
-        <svg width="24" height="24" fill="none" aria-hidden="true">
+        <svg
+          width="24"
+          height="24"
+          fill="none"
+          aria-hidden="true"
+        >
           <path
             d="M12 6v.01M12 12v.01M12 18v.01M12 7a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm0 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm0 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"
             stroke="currentColor"
@@ -94,7 +114,11 @@ export function NavPopover({ display = 'md:hidden', className, ...props }) {
             onClick={() => setIsOpen(false)}
           >
             <span className="sr-only">Close navigation</span>
-            <svg viewBox="0 0 10 10" className="w-2.5 h-2.5 overflow-visible" aria-hidden="true">
+            <svg
+              viewBox="0 0 10 10"
+              className="w-2.5 h-2.5 overflow-visible"
+              aria-hidden="true"
+            >
               <path
                 d="M0 0L10 10M10 0L0 10"
                 fill="none"
@@ -127,39 +151,32 @@ export function NavPopover({ display = 'md:hidden', className, ...props }) {
 export function NavItems() {
   return (
     <>
-      <li>
-        <Link href="/docs/installation">
-          <a className="hover:text-sky-500 dark:hover:text-sky-400">Docs</a>
-        </Link>
-      </li>
-      <li>
-        <a
-          href="https://tailwindui.com/?ref=top"
-          className="hover:text-sky-500 dark:hover:text-sky-400"
-        >
-          Components
-        </a>
-      </li>
-      <li>
-        <Link href="/blog">
-          <a className="hover:text-sky-500 dark:hover:text-sky-400">Blog</a>
-        </Link>
-      </li>
-      <li>
-        <Link href="/showcase">
-          <a className="hover:text-sky-500 dark:hover:text-sky-400">
-            Showcase
-            <span className="ml-2 font-medium text-xs leading-5 rounded-full text-sky-600 bg-sky-400/10 px-2 py-0.5  dark:text-sky-400">
-              New
-            </span>
-          </a>
-        </Link>
-      </li>
+      {config.header.links.map(link => (
+        <>
+          <li>
+            <Link href="/docs/installation">
+              <a className="hover:text-sky-500 dark:hover:text-sky-400">{link.label}</a>
+            </Link>
+          </li>
+        </>
+      ))}
     </>
   )
 }
 
-export function Header({ hasNav = false, navIsOpen, onNavToggle, title, section }) {
+export function Header({
+  hasNav = false,
+  navIsOpen,
+  onNavToggle,
+  title,
+  section
+}: {
+  hasNav?: boolean
+  navIsOpen: boolean
+  onNavToggle?: (navIsOpen: boolean) => void
+  title: string
+  section: string
+}) {
   let [isOpaque, setIsOpaque] = useState(false)
 
   useEffect(() => {
@@ -174,16 +191,14 @@ export function Header({ hasNav = false, navIsOpen, onNavToggle, title, section 
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => {
-      window.removeEventListener('scroll', onScroll, { passive: true })
+      window.removeEventListener('scroll', onScroll)
     }
   }, [isOpaque])
 
   return (
     <>
       <div className="absolute z-20 top-0 inset-x-0 flex justify-center overflow-hidden pointer-events-none">
-        <div className="w-[108rem] flex-none flex justify-end">
-          
-        </div>
+        <div className="w-[108rem] flex-none flex justify-end"></div>
       </div>
       <div
         className={clsx(
@@ -204,7 +219,7 @@ export function Header({ hasNav = false, navIsOpen, onNavToggle, title, section 
               <Link href="/">
                 <a
                   className="mr-3 flex-none w-[2.0625rem] overflow-hidden md:w-auto"
-                  onContextMenu={(e) => {
+                  onContextMenu={e => {
                     e.preventDefault()
                     Router.push('/brand')
                   }}
@@ -252,21 +267,31 @@ export function Header({ hasNav = false, navIsOpen, onNavToggle, title, section 
                   aria-hidden="true"
                 >
                   <path d="m19 19-3.5-3.5" />
-                  <circle cx="11" cy="11" r="6" />
+                  <circle
+                    cx="11"
+                    cy="11"
+                    r="6"
+                  />
                 </svg>
               </SearchButton>
-              <NavPopover className="ml-2 -my-1" display="lg:hidden" />
+              <NavPopover
+                className="ml-2 -my-1"
+                display="lg:hidden"
+              />
             </div>
           </div>
           {hasNav && (
             <div className="flex items-center p-4 border-b border-slate-900/10 lg:hidden dark:border-slate-50/[0.06]">
               <button
                 type="button"
-                onClick={() => onNavToggle(!navIsOpen)}
+                onClick={() => onNavToggle?.(!navIsOpen)}
                 className="text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300"
               >
                 <span className="sr-only">Navigation</span>
-                <svg width="24" height="24">
+                <svg
+                  width="24"
+                  height="24"
+                >
                   <path
                     d="M5 6h14M5 12h14M5 18h14"
                     fill="none"

@@ -7,18 +7,10 @@ const { withSyntaxHighlighting } = require('./remark/withSyntaxHighlighting')
 const { withNextLinks } = require('./remark/withNextLinks')
 const { withLinkRoles } = require('./rehype/withLinkRoles')
 const minimatch = require('minimatch')
-const {
-  highlightCode,
-  fixSelectorEscapeTokens,
-  simplifyToken,
-  normalizeTokens,
-} = require('./remark/utils')
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
 const defaultConfig = require('tailwindcss/resolveConfig')(require('tailwindcss/defaultConfig'))
-const dlv = require('dlv')
-const Prism = require('prismjs')
 
 const fallbackLayouts = {
   'src/pages/docs/**/*': ['src/layouts/DocumentationLayout', 'DocumentationLayout'],
@@ -26,10 +18,6 @@ const fallbackLayouts = {
 
 const fallbackDefaultExports = {
   'src/pages/{docs,components}/**/*': ['src/layouts/ContentsLayout', 'ContentsLayout'],
-}
-
-const fallbackGetStaticProps = {
-  'src/pages/blog/**/*': 'src/layouts/BlogPostLayout',
 }
 
 module.exports = withBundleAnalyzer({
@@ -45,19 +33,6 @@ module.exports = withBundleAnalyzer({
     ]
   },
   webpack(config, options) {
-    config.module.rules.push({
-      test: /\.mp4$/i,
-      issuer: /\.(jsx?|tsx?|mdx)$/,
-      use: [
-        {
-          loader: 'file-loader',
-          options: {
-            publicPath: '/_next',
-            name: 'static/media/[name].[hash].[ext]',
-          },
-        },
-      ],
-    })
 
     config.resolve.alias['defaultConfig$'] = require.resolve('tailwindcss/defaultConfig')
     config.module.rules.push({
@@ -92,43 +67,6 @@ module.exports = withBundleAnalyzer({
       }),
     })
 
-    config.module.rules.push({
-      resourceQuery: /fields/,
-      use: createLoader(function (source) {
-        let fields = new URLSearchParams(this.resourceQuery).get('fields').split(',')
-        return JSON.stringify(JSON.parse(source), (key, value) => {
-          return ['', ...fields].includes(key) ? value : undefined
-        })
-      }),
-    })
-
-    config.module.rules.push({
-      resourceQuery: /highlight/,
-      use: [
-        options.defaultLoaders.babel,
-        createLoader(function (source) {
-          let lang =
-            new URLSearchParams(this.resourceQuery).get('highlight') ||
-            this.resourcePath.split('.').pop()
-          let isDiff = lang.startsWith('diff-')
-          let prismLang = isDiff ? lang.substr(5) : lang
-          let grammar = Prism.languages[isDiff ? 'diff' : prismLang]
-          let tokens = Prism.tokenize(source, grammar, lang)
-
-          if (lang === 'css') {
-            fixSelectorEscapeTokens(tokens)
-          }
-
-          return `
-            export const tokens = ${JSON.stringify(tokens.map(simplifyToken))}
-            export const lines = ${JSON.stringify(normalizeTokens(tokens))}
-            export const code = ${JSON.stringify(source)}
-            export const highlightedCode = ${JSON.stringify(highlightCode(source, lang))}
-          `
-        }),
-      ],
-    })
-
     let mdx = (plugins = []) => [
       {
         loader: '@mdx-js/loader',
@@ -155,51 +93,6 @@ module.exports = withBundleAnalyzer({
         return source + `\n\nexport const slug = '${slug}'`
       }),
     ]
-
-    config.module.rules.push({
-      test: { and: [/\.mdx$/, /snippets/] },
-      resourceQuery: { not: [/rss/, /preview/] },
-      use: [
-        options.defaultLoaders.babel,
-        {
-          loader: '@mdx-js/loader',
-          options: {
-            remarkPlugins: [withSyntaxHighlighting],
-          },
-        },
-      ],
-    })
-
-    config.module.rules.push({
-      test: /\.mdx$/,
-      resourceQuery: /rss/,
-      use: [options.defaultLoaders.babel, ...mdx()],
-    })
-
-    config.module.rules.push({
-      test: /\.mdx$/,
-      resourceQuery: /preview/,
-      use: [
-        options.defaultLoaders.babel,
-        createLoader(function (src) {
-          const [preview] = src.split('<!--/excerpt-->')
-          return preview.replace('<!--excerpt-->', '')
-        }),
-        ...mdx([
-          () => (tree) => {
-            let firstParagraphIndex = tree.children.findIndex((child) => child.type === 'paragraph')
-            if (firstParagraphIndex > -1) {
-              tree.children = tree.children.filter((child, index) => {
-                if (child.type === 'import' || child.type === 'export') {
-                  return true
-                }
-                return index <= firstParagraphIndex
-              })
-            }
-          },
-        ]),
-      ],
-    })
 
     function mainMdxLoader(plugins) {
       return [
@@ -252,19 +145,6 @@ module.exports = withBundleAnalyzer({
             }
           }
 
-          if (
-            !/^\s*export\s+(async\s+)?function\s+getStaticProps\s+/m.test(
-              source.replace(/```(.*?)```/gs, '')
-            )
-          ) {
-            for (let glob in fallbackGetStaticProps) {
-              if (minimatch(resourcePath, glob)) {
-                extra.push(`export { getStaticProps } from '${fallbackGetStaticProps[glob]}'`)
-                break
-              }
-            }
-          }
-
           let metaExport
           if (!/export\s+(const|let|var)\s+meta\s*=/.test(source)) {
             metaExport =
@@ -287,118 +167,10 @@ module.exports = withBundleAnalyzer({
     }
 
     config.module.rules.push({
-      test: { and: [/\.mdx$/], not: [/snippets/] },
-      resourceQuery: { not: [/rss/, /preview/] },
-      exclude: [path.join(__dirname, 'src/pages/showcase/')],
-      use: mainMdxLoader(),
-    })
-
-    config.module.rules.push({
       test: /\.mdx$/,
-      include: [path.join(__dirname, 'src/pages/showcase/')],
-      use: mainMdxLoader(null),
+      use: mainMdxLoader(),
     })
 
     return config
   },
 })
-
-function normalizeProperties(input) {
-  if (typeof input !== 'object') return input
-  if (Array.isArray(input)) return input.map(normalizeProperties)
-  return Object.keys(input).reduce((newObj, key) => {
-    let val = input[key]
-    let newVal = typeof val === 'object' ? normalizeProperties(val) : val
-    newObj[key.replace(/([a-z])([A-Z])/g, (m, p1, p2) => `${p1}-${p2.toLowerCase()}`)] = newVal
-    return newObj
-  }, {})
-}
-
-function getUtilities(plugin, { includeNegativeValues = false } = {}) {
-  if (!plugin) return {}
-  const utilities = {}
-
-  function addUtilities(utils) {
-    utils = Array.isArray(utils) ? utils : [utils]
-    for (let i = 0; i < utils.length; i++) {
-      for (let prop in utils[i]) {
-        for (let p in utils[i][prop]) {
-          if (p.startsWith('@defaults')) {
-            delete utils[i][prop][p]
-          }
-        }
-        utilities[prop] = normalizeProperties(utils[i][prop])
-      }
-    }
-  }
-
-  plugin({
-    addBase: () => { },
-    addDefaults: () => { },
-    addComponents: () => { },
-    corePlugins: () => true,
-    prefix: (x) => x,
-    config: (option, defaultValue) => (option ? defaultValue : { future: {} }),
-    addUtilities,
-    theme: (key, defaultValue) => dlv(defaultConfig.theme, key, defaultValue),
-    matchUtilities: (matches, { values, supportsNegativeValues } = {}) => {
-      if (!values) return
-
-      let modifierValues = Object.entries(values)
-
-      if (includeNegativeValues && supportsNegativeValues) {
-        let negativeValues = []
-        for (let [key, value] of modifierValues) {
-          let negatedValue = require('tailwindcss/lib/util/negateValue').default(value)
-          if (negatedValue) {
-            negativeValues.push([`-${key}`, negatedValue])
-          }
-        }
-        modifierValues.push(...negativeValues)
-      }
-
-      let result = Object.entries(matches).flatMap(([name, utilityFunction]) => {
-        return modifierValues
-          .map(([modifier, value]) => {
-            let declarations = utilityFunction(value, {
-              includeRules(rules) {
-                addUtilities(rules)
-              },
-            })
-
-            if (!declarations) {
-              return null
-            }
-
-            return {
-              [require('tailwindcss/lib/util/nameClass').default(name, modifier)]: declarations,
-            }
-          })
-          .filter(Boolean)
-      })
-
-      for (let obj of result) {
-        for (let key in obj) {
-          let deleteKey = false
-          for (let subkey in obj[key]) {
-            if (subkey.startsWith('@defaults')) {
-              delete obj[key][subkey]
-              continue
-            }
-            if (subkey.includes('&')) {
-              result.push({
-                [subkey.replace(/&/g, key)]: obj[key][subkey],
-              })
-              deleteKey = true
-            }
-          }
-
-          if (deleteKey) delete obj[key]
-        }
-      }
-
-      addUtilities(result)
-    },
-  })
-  return utilities
-}

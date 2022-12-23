@@ -1,0 +1,95 @@
+{
+  "name": "Vessel",
+  "version": "1.0.0",
+  "favicon": "favicon.ico",
+  "logo": {
+    "light": "logo.png",
+    "dark": "logo.png"
+  },
+  "theme": {
+    "primary": "#424054",
+    "trim": "#424054",
+    "fonts": {
+      "header": "Inter",
+      "body": "Inter"
+    }
+  },
+  "header": {
+    "links": [
+      {
+        "url": "https://github.com/rayepps/chiller",
+        "icon": "github"
+      },
+      {
+        "url": "https://chiller.voter",
+        "label": "Vote",
+        "button": "round-xl"
+      }
+    ]
+  },
+  "sidebar": {
+    "links": [
+      {
+        "url": "https://github.com/rayepps/chiller/discussion",
+        "icon": "book"
+      }
+    ],
+    "groups": [
+      {
+        "label": "Getting Started",
+        "pages": [
+          "getting-started",
+          "packages",
+          "root-hooks",
+          "hooks",
+          "init-hooks"
+        ]
+      },
+      {
+        "label": "Packages",
+        "pages": [
+          "core-concepts",
+          "writing-hooks"
+        ]
+      }
+    ]
+  },
+  "search": {
+    "strategy": "algolia | pages",
+    "key": "....."
+  },
+  "versions": {
+    "default": "v2.0.0",
+    "v1.0.0": [
+      {
+        "label": "Getting Started",
+        "pages": [
+          "getting-started-v1",
+          "packages-v1"
+        ]
+      },
+      {
+        "label": "Packages",
+        "pages": [
+          "core-concepts-v1"
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "links": [
+      {
+        "url": "https://twitter.com/chiller-docs",
+        "icon": "twitter"
+      },
+      {
+        "url": "https://github.com/rayepps/chiller",
+        "icon": "github"
+      },
+      {
+        "url": "https://github.com/rayepps/chiller/blob/{{source}}",
+        "button": "text"
+      }
+    ]
+  }
+}

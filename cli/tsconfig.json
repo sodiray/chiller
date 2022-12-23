@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "target": "es2021",
+    "lib": [
+      "es2021"
+    ],
+    "esModuleInterop": true,
+    "strict": true
+  }
+}

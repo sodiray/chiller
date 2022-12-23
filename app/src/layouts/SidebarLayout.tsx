@@ -556,7 +556,7 @@ export function SidebarLayout({
   navIsOpen: boolean
   setNavIsOpen?: (navIsOpen: boolean) => void
   nav: any
-  sidebar: any
+  sidebar: ReactNode
   fallbackHref: string
   layoutProps: {
     allowOverflow?: boolean

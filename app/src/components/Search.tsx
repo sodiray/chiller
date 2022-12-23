@@ -5,7 +5,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { DocSearchModal } from '@docsearch/react'
 import clsx from 'clsx'
-import { useActionKey } from '@/hooks/useActionKey'
+import { useActionKey } from 'src/hooks/useActionKey'
 
 const INDEX_NAME = 'tailwindcss'
 const API_KEY = '5fc87cef58bb80203d2207578309fab6'

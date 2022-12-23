@@ -1,6 +1,6 @@
-import { SidebarLayout } from '@/layouts/SidebarLayout'
-import { Title } from '@/components/Meta'
-import { documentationNav } from '@/navs/documentation'
+import { SidebarLayout } from 'src/layouts/SidebarLayout'
+import { Title } from 'src/components/Meta'
+import { documentationNav } from 'src/navs/documentation'
 
 export function DocumentationLayout(props) {
   return (

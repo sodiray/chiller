@@ -47,7 +47,7 @@ module.exports.withSyntaxHighlighting = () => {
 
       if (node.meta) {
         if (!componentName) {
-          componentName = addImport(preTree, '@/components/Editor', 'Editor')
+          componentName = addImport(preTree, 'src/components/Editor', 'Editor')
         }
         return [
           { type: 'jsx', value: `<${componentName} filename="${node.meta}">` },

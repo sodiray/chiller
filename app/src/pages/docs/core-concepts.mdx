@@ -32,7 +32,7 @@ The `request` property on the `Props` object contains metadata about the request
 The `response` exists for convinence. This is not a mutable object like the `res` object in Express is. It's a simple object with a few default properties to help you create a more specific response if you need to by extending it.
 
 ```ts
-import type { Props } from '@exobase/core'
+import type { Props } from 'srcexobase/core'
 
 export const endpoint = async ({ args, response }: Props) => {
   if (!args.id) {
@@ -63,14 +63,14 @@ The arguments can come from any part of a request. Most commonly we parse args f
 
 ```ts
 import { compose } from 'radash'
-import type { Props } from '@exobase/core'
-import { useExpress } from '@exobase/use-express'
+import type { Props } from 'srcexobase/core'
+import { useExpress } from 'srcexobase/use-express'
 import {
   useJsonArgs,
   useQueryArgs,
   useHeaders,
   usePathParams
-} from '@exobase/hooks'
+} from 'srcexobase/hooks'
 
 export const endpoint = async ({ args, response }: Props) => {
   console.log(props)
@@ -112,9 +112,9 @@ Exobase provides the `useServices` hook to _inject_ things into the `services`.
 
 ```ts
 import { compose } from 'radash'
-import type { Props } from '@exobase/core'
-import { useLambda } from '@exobase/use-lambda'
-import { useServices, useQueryArgs } from '@exobase/hooks'
+import type { Props } from 'srcexobase/core'
+import { useLambda } from 'srcexobase/use-lambda'
+import { useServices, useQueryArgs } from 'srcexobase/hooks'
 
 export const getBookById = async ({ services, args }: Props) => {
   const { database } = services
@@ -145,9 +145,9 @@ Like `args` and `services` the `auth` property on the `Props` is a placholder ob
 
 ```ts
 import { compose } from 'radash'
-import type { Props } from '@exobase/core'
-import { useLambda } from '@exobase/use-lambda'
-import { useApiKey } from '@exobase/hooks'
+import type { Props } from 'srcexobase/core'
+import { useLambda } from 'srcexobase/use-lambda'
+import { useApiKey } from 'srcexobase/hooks'
 
 export const getBookById = async ({ args, auth }: Props) => {
   console.log(args) // {}
@@ -272,9 +272,9 @@ Ideally, this format makes endpoint functions easy to test.
 
 ```ts
 import { compose } from 'radash'
-import type { Props } from '@exobase/core'
-import { useLambda } from '@exobase/use-lambda'
-import { useServices, useQueryArgs } from '@exobase/hooks'
+import type { Props } from 'srcexobase/core'
+import { useLambda } from 'srcexobase/use-lambda'
+import { useServices, useQueryArgs } from 'srcexobase/hooks'
 
 // The endpoint function
 export const getBookById = async ({ services, args }: Props) => {

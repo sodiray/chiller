@@ -7,14 +7,12 @@ const { withSyntaxHighlighting } = require('./remark/withSyntaxHighlighting')
 const { withNextLinks } = require('./remark/withNextLinks')
 const { withLinkRoles } = require('./rehype/withLinkRoles')
 const minimatch = require('minimatch')
-const withExamples = require('./remark/withExamples')
 const {
   highlightCode,
   fixSelectorEscapeTokens,
   simplifyToken,
   normalizeTokens,
 } = require('./remark/utils')
-const { withPrevalInstructions } = require('./remark/withPrevalInstructions')
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
@@ -23,22 +21,20 @@ const dlv = require('dlv')
 const Prism = require('prismjs')
 
 const fallbackLayouts = {
-  'src/pages/docs/**/*': ['@/layouts/DocumentationLayout', 'DocumentationLayout'],
+  'src/pages/docs/**/*': ['src/layouts/DocumentationLayout', 'DocumentationLayout'],
 }
 
 const fallbackDefaultExports = {
-  'src/pages/{docs,components}/**/*': ['@/layouts/ContentsLayout', 'ContentsLayout'],
-  'src/pages/blog/**/*': ['@/layouts/BlogPostLayout', 'BlogPostLayout'],
-  'src/pages/showcase/**/*': ['@/layouts/ShowcaseLayout', 'ShowcaseLayout'],
+  'src/pages/{docs,components}/**/*': ['src/layouts/ContentsLayout', 'ContentsLayout'],
 }
 
 const fallbackGetStaticProps = {
-  'src/pages/blog/**/*': '@/layouts/BlogPostLayout',
+  'src/pages/blog/**/*': 'src/layouts/BlogPostLayout',
 }
 
 module.exports = withBundleAnalyzer({
   swcMinify: true,
-  pageExtensions: ['js', 'jsx', 'mdx'],
+  pageExtensions: ['js', 'tsx', 'jsx', 'mdx'],
   experimental: {
     esmExternals: false,
   },
@@ -68,42 +64,6 @@ module.exports = withBundleAnalyzer({
       test: require.resolve('tailwindcss/defaultConfig'),
       use: createLoader(function (_source) {
         return `export default ${JSON.stringify(defaultConfig)}`
-      }),
-    })
-
-    config.resolve.alias['utilities$'] = require.resolve('tailwindcss/lib/corePlugins.js')
-
-    // import utilities from 'utilities?plugin=backgroundColor'
-    config.module.rules.push({
-      resourceQuery: /plugin/,
-      test: require.resolve('tailwindcss/lib/corePlugins.js'),
-      use: createLoader(function (_source) {
-        let pluginName = new URLSearchParams(this.resourceQuery).get('plugin')
-        let plugin = require('tailwindcss/lib/corePlugins.js').corePlugins[pluginName]
-        return `export default ${JSON.stringify(getUtilities(plugin))}`
-      }),
-    })
-
-    config.module.rules.push({
-      resourceQuery: /examples/,
-      test: require.resolve('tailwindcss/lib/corePlugins.js'),
-      use: createLoader(function (_source) {
-        let plugins = require('tailwindcss/lib/corePlugins.js').corePlugins
-        let examples = Object.entries(plugins).map(([name, plugin]) => {
-          let utilities = getUtilities(plugin)
-          return {
-            plugin: name,
-            example:
-              Object.keys(utilities).length > 0
-                ? Object.keys(utilities)
-                [Math.floor((Object.keys(utilities).length - 1) / 2)].split(/[>:]/)[0]
-                  .trim()
-                  .substr(1)
-                  .replace(/\\/g, '')
-                : undefined,
-          }
-        })
-        return `export default ${JSON.stringify(examples)}`
       }),
     })
 
@@ -177,8 +137,6 @@ module.exports = withBundleAnalyzer({
             ? {}
             : {
               remarkPlugins: [
-                withPrevalInstructions,
-                withExamples,
                 withTableOfContents,
                 withSyntaxHighlighting,
                 withNextLinks,

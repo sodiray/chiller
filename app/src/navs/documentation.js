@@ -1,6 +1,6 @@
-import { createPageList } from '@/utils/createPageList'
+import { createPageList } from 'src/utils/createPageList'
 import { objectify } from 'radash'
-import config from '@/config'
+import config from 'src/config'
 
 const pages = createPageList(
   require.context(`../pages/docs/?meta=title,shortTitle,published`, false, /\.mdx$/),

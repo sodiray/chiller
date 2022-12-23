@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { createContext, forwardRef, useRef } from 'react'
-import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect'
+import { useIsomorphicLayoutEffect } from 'src/hooks/useIsomorphicLayoutEffect'
 import clsx from 'clsx'
-import { SearchButton } from '@/components/Search'
+import { SearchButton } from 'src/components/Search'
 import { Dialog } from '@headlessui/react'
 
 export const SidebarContext = createContext()

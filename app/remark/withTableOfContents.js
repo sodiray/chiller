@@ -3,7 +3,7 @@ const slugify = require('@sindresorhus/slugify')
 
 module.exports.withTableOfContents = () => {
   return (tree) => {
-    const component = addImport(tree, '@/components/Heading', 'Heading')
+    const component = addImport(tree, 'src/components/Heading', 'Heading')
     const contents = []
 
     for (let nodeIndex = 0; nodeIndex < tree.children.length; nodeIndex++) {

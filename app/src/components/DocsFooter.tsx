@@ -1,7 +1,16 @@
 import Link from 'next/link'
 import clsx from 'clsx'
+import { ReactNode } from 'react'
 
-export function DocsFooter({ children, previous, next }) {
+export function DocsFooter({ 
+  children, 
+  previous, 
+  next 
+}: {
+  children: ReactNode,
+  previous: any
+  next: any
+}) {
   return (
     <footer className={clsx('text-sm leading-6', previous || next ? 'mt-12' : 'mt-16')}>
       {(previous || next) && (

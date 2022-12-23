@@ -1,4 +1,4 @@
-import { useIsomorphicLayoutEffect } from '@/hooks/useIsomorphicLayoutEffect'
+import { useIsomorphicLayoutEffect } from 'src/hooks/useIsomorphicLayoutEffect'
 import { Listbox } from '@headlessui/react'
 import clsx from 'clsx'
 import { Fragment, useEffect, useRef } from 'react'

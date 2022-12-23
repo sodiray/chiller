@@ -1,7 +1,7 @@
 import { memo, useEffect, useRef, useState, Fragment } from 'react'
 import { isObject } from 'radash'
 import clsx from 'clsx'
-import { Heading } from '@/components/Heading'
+import { Heading } from 'src/components/Heading'
 
 function renderProperties(
   properties,

@@ -6,7 +6,7 @@ module.exports = {
   experimental: {
     optimizeUniversalDefaults: true,
   },
-  content: ['./src/**/*.{js,jsx,mdx,html}', './remark/**/*.js'],
+  content: ['./src/**/*.{js,jsx,tsx,mdx,html}', './remark/**/*.js'],
   darkMode: 'class',
   theme: {
     // `demo-*` screens are used for the "mobile-first" responsive demo

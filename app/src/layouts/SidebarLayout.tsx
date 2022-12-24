@@ -1,21 +1,14 @@
+import { Dialog } from '@headlessui/react'
+import clsx from 'clsx'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import {
-  ChangeEventHandler,
-  createContext,
-  forwardRef,
-  ReactNode,
-  Ref,
-  useRef
-} from 'react'
-import { useIsomorphicLayoutEffect } from 'src/hooks/useIsomorphicLayoutEffect'
-import clsx from 'clsx'
+import { ChangeEventHandler, forwardRef, ReactNode, Ref, useRef } from 'react'
 import { SearchButton } from 'src/components/Search'
-import { Dialog } from '@headlessui/react'
 import config from 'src/config'
 import { useActionKey } from 'src/hooks/useActionKey'
-
-export const SidebarContext = createContext({})
+import { useIsomorphicLayoutEffect } from 'src/hooks/useIsomorphicLayoutEffect'
+import { SidebarContext } from 'src/state'
+import { TableOfContentsList } from 'src/types'
 
 const NavItem = forwardRef(
   (
@@ -97,12 +90,10 @@ function nearestScrollableContainer(el: Element) {
 
 function Nav({
   nav,
-  children,
   fallbackHref,
   mobile = false
 }: {
   nav: any
-  children: ReactNode
   fallbackHref?: string
   mobile?: boolean
 }) {
@@ -152,11 +143,9 @@ function Nav({
       </div>
       <ul>
         <TopLevelNav mobile={mobile} />
-        {children}
         {nav &&
           Object.keys(nav)
             .map(category => {
-              console.log(nav)
               let publishedItems = nav[category].filter(
                 item => item.published !== false
               )
@@ -549,17 +538,19 @@ export function SidebarLayout({
   navIsOpen,
   setNavIsOpen,
   nav,
-  sidebar,
   fallbackHref,
+  tableOfContents,
+  section,
   allowOverflow = true
 }: {
   children: ReactNode
   navIsOpen: boolean
   setNavIsOpen?: (navIsOpen: boolean) => void
   nav: any
-  sidebar: ReactNode
+  section: string
   fallbackHref?: string
   allowOverflow?: boolean
+  tableOfContents: TableOfContentsList
 }) {
   return (
     <SidebarContext.Provider value={{ nav, navIsOpen, setNavIsOpen }}>
@@ -569,9 +560,7 @@ export function SidebarLayout({
             <Nav
               nav={nav}
               fallbackHref={fallbackHref}
-            >
-              {sidebar}
-            </Nav>
+            />
           </div>
           <div className="lg:pl-[19.5rem]">{children}</div>
         </div>
@@ -607,9 +596,7 @@ export function SidebarLayout({
             nav={nav}
             fallbackHref={fallbackHref}
             mobile={true}
-          >
-            {sidebar}
-          </Nav>
+          />
         </div>
       </Dialog>
     </SidebarContext.Provider>

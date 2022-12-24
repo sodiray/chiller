@@ -6,19 +6,10 @@ const { withTableOfContents } = require('./remark/withTableOfContents')
 const { withSyntaxHighlighting } = require('./remark/withSyntaxHighlighting')
 const { withNextLinks } = require('./remark/withNextLinks')
 const { withLinkRoles } = require('./rehype/withLinkRoles')
-const minimatch = require('minimatch')
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
 const defaultConfig = require('tailwindcss/resolveConfig')(require('tailwindcss/defaultConfig'))
-
-const fallbackLayouts = {
-  'src/pages/docs/**/*': ['src/layouts/DocumentationLayout', 'DocumentationLayout'],
-}
-
-const fallbackDefaultExports = {
-  'src/pages/docs/**/*': ['src/layouts/ContentsLayout', 'ContentsLayout'],
-}
 
 module.exports = withBundleAnalyzer({
   swcMinify: true,
@@ -73,7 +64,6 @@ module.exports = withBundleAnalyzer({
         options.defaultLoaders.babel,
 
         createLoader(function (source) {
-          console.log('x--> FIRST\n', source)
           if (source.includes('/*START_META*/')) {
             const [meta] = source.match(/\/\*START_META\*\/(.*?)\/\*END_META\*\//s)
             return 'export default ' + meta
@@ -122,34 +112,6 @@ module.exports = withBundleAnalyzer({
           }
 
           let extra = []
-          let resourcePath = path.relative(__dirname, this.resourcePath)
-
-          // if (!/^\s*export\s+(var|let|const)\s+Layout\s+=/m.test(source)) {
-          //   for (let glob in fallbackLayouts) {
-          //     if (minimatch(resourcePath, glob)) {
-          //       extra.push(
-          //         `import { ${fallbackLayouts[glob][1]} as _Layout } from '${fallbackLayouts[glob][0]}'`,
-          //         'export const Layout = _Layout'
-          //       )
-          //       break
-          //     }
-          //   }
-          // }
-          console.log('x--> BEFORE\n', source)
-
-          // if (!/^\s*export\s+default\s+/m.test(source.replace(/```(.*?)```/gs, ''))) {
-          //   for (let glob in fallbackDefaultExports) {
-          //     if (minimatch(resourcePath, glob)) {
-          //       extra.push(
-          //         `import { ${fallbackDefaultExports[glob][1]} as _Default } from '${fallbackDefaultExports[glob][0]}'`,
-          //         'export default _Default'
-          //       )
-          //       break
-          //     }
-          //   }
-          // }
-
-          console.log('x--> AFTER\n', source)
 
           let metaExport
           if (!/export\s+(const|let|var)\s+meta\s*=/.test(source)) {
@@ -158,8 +120,6 @@ module.exports = withBundleAnalyzer({
                 ? `export const meta = ${JSON.stringify(meta)}`
                 : `export const meta = /*START_META*/${JSON.stringify(meta || {})}/*END_META*/`
           }
-
-          
 
           return [
             ...(typeof fields === 'undefined' ? extra : []),

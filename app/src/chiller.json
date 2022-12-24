@@ -51,7 +51,8 @@
       {
         "label": "Getting Started",
         "pages": [
-          "installation"
+          "installation",
+          "core-concepts"
         ]
       }
     ]

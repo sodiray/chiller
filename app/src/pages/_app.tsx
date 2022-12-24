@@ -11,15 +11,13 @@ import { Header } from 'src/components/Header'
 import { Heading } from 'src/components/Heading'
 import { PageHeader } from 'src/components/PageHeader'
 import { SearchProvider } from 'src/components/Search'
+import { TableOfContents } from 'src/components/TableOfContents'
 import config from 'src/config'
 import { usePrevNext } from 'src/hooks/usePrevNext'
-import {
-  ContentsContext,
-  TableOfContents,
-  useTableOfContents
-} from 'src/layouts/ContentsLayout'
+import { useTableOfContents } from 'src/hooks/useTableOfContents'
 import { SidebarLayout } from 'src/layouts/SidebarLayout'
-import { documentationNav } from 'src/navs/documentation'
+import { documentationNav } from 'src/nav'
+import { ContentsContext } from 'src/state'
 import { TableOfContentsList } from 'src/types'
 import '../css/fonts.css'
 import '../css/main.css'
@@ -64,8 +62,6 @@ type Props = AppProps & {
 }
 
 export default function App({ Component, pageProps, router }: Props) {
-  console.log({ Component, pageProps })
-
   let [navIsOpen, setNavIsOpen] = useState(false)
 
   useEffect(() => {
@@ -95,11 +91,6 @@ export default function App({ Component, pageProps, router }: Props) {
   const { currentSection, registerHeading, unregisterHeading } =
     useTableOfContents(Component.layoutProps?.tableOfContents ?? [])
   let { prev, next } = usePrevNext(documentationNav)
-
-  console.log({
-    section,
-    nav: documentationNav
-  })
 
   return (
     <>
@@ -160,6 +151,8 @@ export default function App({ Component, pageProps, router }: Props) {
           navIsOpen={navIsOpen}
           setNavIsOpen={setNavIsOpen}
           nav={documentationNav}
+          section={section}
+          tableOfContents={Component.layoutProps?.tableOfContents!}
         >
           <div className="max-w-3xl mx-auto pt-10 xl:max-w-none xl:ml-0 xl:mr-[15.5rem] xl:pr-16">
             <PageHeader

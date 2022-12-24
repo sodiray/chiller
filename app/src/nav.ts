@@ -1,8 +1,13 @@
 import { objectify } from 'radash'
 import config from 'src/config'
+import * as glob from 'glob'
+
+const files = glob.sync('./pages/docs/**/*.mdx')
+
+console.log('x--> files: ', files)
 
 const context = require.context(
-  `./pages/docs/?meta=title,shortTitle,published`,
+  `./pages/docs/**/*.mdx`,
   false,
   /\.mdx$/
 )
@@ -12,6 +17,8 @@ const imported = context.keys().map(fileName => ({
   module: context(fileName),
   slug: fileName.substr(2).replace(/\.mdx$/, '')
 }))
+
+console.log('x--> imported', imported)
 
 const pages = objectify(
   imported,

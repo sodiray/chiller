@@ -1,16 +1,17 @@
 #!/usr/bin/env node
 
-// import prompt from 'prompt-sync'
 import chalk from 'chalk'
 import { program } from 'commander'
 import build from './commands/build'
 import dev from './commands/dev'
 import install from './commands/install'
+import sync from './commands/sync'
+import pkg from './package'
 
 program
-  .version('0.1.0')
-  .name('mojito')
-  .description('CLI to run and build mojito docs')
+  .version(pkg.version)
+  .name('chiller')
+  .description('CLI to run and build chiller docs')
 
 program
   .command('dev')
@@ -18,6 +19,14 @@ program
   //   .option('-u, --url <url>', 'Optional, override the exobase api url', API_URL)
   .action(async (args: { url: string }) => {
     await dev()
+  })
+
+program
+  .command('sync')
+  .description('Authenticate with exobase to enable publish and deploy')
+  //   .option('-u, --url <url>', 'Optional, override the exobase api url', API_URL)
+  .action(async (args: { url: string }) => {
+    await sync()
   })
 
 program
@@ -30,7 +39,7 @@ program
     await build()
   })
 
-  program
+program
   .command('install')
   //   .option('-u, --url <url>', 'Optional, override the exobase api url', API_URL)
   .description(

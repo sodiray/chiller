@@ -1,10 +1,18 @@
+const config = require('./chiller.json')
+
+type DeepPartial<T> = T extends object
+  ? {
+      [P in keyof T]?: DeepPartial<T[P]>
+    }
+  : T | undefined
+
 export type ChillerConfig = {
   name: string
   version: string
   favicon: string
   domain: string
   description: string
-  pages: string[]
+  pages: string | string[]
   logo: {
     light: string
     dark: string
@@ -43,3 +51,5 @@ export type ChillerConfig = {
     }[]
   }
 }
+
+export default config as DeepPartial<ChillerConfig>

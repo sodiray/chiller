@@ -1,22 +1,21 @@
 import cmd from 'cmdish'
-import fse from 'fs-extra'
-import path from 'path'
-import cj from '../chiller-config'
+import cfg from '../chiller-config'
+import pkg from '../package'
 
 type Services = {
   cmd: typeof cmd
-  fse: typeof fse
-  cj: typeof cj
+  cfg: typeof cfg
 }
 
 const install =
-  ({ cmd, fse, cj }: Services) =>
+  ({ cmd, cfg }: Services) =>
   async () => {
-    // - Read chiller json file
-    const chiller = await cj.read()
+    // - Read chiller json file to ensure it
+    //   exists in the current directory
+    await cfg.read()
 
     // - Create .mojito directory and enter it
-    await fse.ensureDir(path.join('~', '.chiller'))
+    await cmd('mkdir .chiller')
     await cmd('cd .chiller')
 
     // - Clone the rayepps/mojito repo into .mojito
@@ -24,7 +23,7 @@ const install =
 
     // - Checkout the ref/tag matching the currently
     //   installed mojito cli version
-    await cmd(`git checkout ref/${chiller.version}`)
+    await cmd(`git checkout ref/${pkg.version}`)
 
     // - Enter the app directory where the actual
     //   nextjs/react app is
@@ -36,6 +35,5 @@ const install =
 
 export default install({
   cmd,
-  fse,
-  cj
+  cfg
 })

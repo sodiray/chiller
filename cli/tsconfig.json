@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "outDir": "dist",
+    "target": "es2022",
     "moduleResolution": "node",
-    "target": "es2021",
     "lib": [
-      "es2021"
+      "es2022"
     ],
     "esModuleInterop": true,
     "strict": true

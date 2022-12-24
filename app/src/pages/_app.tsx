@@ -1,18 +1,32 @@
+import ProgressBar from '@badrap/bar-of-progress'
+import { ResizeObserver } from '@juggle/resize-observer'
+import { MDXProvider } from '@mdx-js/react'
+import 'focus-visible'
+import type { AppProps } from 'next/app'
+import Head from 'next/head'
+import Router from 'next/router'
+import { FunctionComponent, useEffect, useState } from 'react'
+import { DocsFooter } from 'src/components/DocsFooter'
+import { Header } from 'src/components/Header'
+import { Heading } from 'src/components/Heading'
+import { PageHeader } from 'src/components/PageHeader'
+import { SearchProvider } from 'src/components/Search'
+import config from 'src/config'
+import { usePrevNext } from 'src/hooks/usePrevNext'
+import {
+  ContentsContext,
+  TableOfContents,
+  useTableOfContents
+} from 'src/layouts/ContentsLayout'
+import { SidebarLayout } from 'src/layouts/SidebarLayout'
+import { documentationNav } from 'src/navs/documentation'
+import { TableOfContentsList } from 'src/types'
 import '../css/fonts.css'
 import '../css/main.css'
-import 'focus-visible'
-import { useState, useEffect, Fragment } from 'react'
-import { Header } from 'src/components/Header'
-import { Description, OgDescription, OgTitle, Title } from 'src/components/Meta'
-import Router from 'next/router'
-import ProgressBar from '@badrap/bar-of-progress'
-import Head from 'next/head'
-import { ResizeObserver } from '@juggle/resize-observer'
-import { SearchProvider } from 'src/components/Search'
 
 declare global {
-  interface Window { 
-    ResizeObserver?: typeof ResizeObserver; 
+  interface Window {
+    ResizeObserver?: typeof ResizeObserver
   }
 }
 
@@ -38,11 +52,20 @@ Router.events.on('routeChangeStart', () => progress.start())
 Router.events.on('routeChangeComplete', () => progress.finish())
 Router.events.on('routeChangeError', () => progress.finish())
 
-export default function App({ 
-  Component, 
-  pageProps, 
-  router 
-}) {
+type Props = AppProps & {
+  Component: AppProps['Component'] & {
+    layoutProps?: {
+      Layout: FunctionComponent
+      meta: Record<string, string>
+      slug: string
+      tableOfContents: TableOfContentsList
+    }
+  }
+}
+
+export default function App({ Component, pageProps, router }: Props) {
+  console.log({ Component, pageProps })
+
   let [navIsOpen, setNavIsOpen] = useState(false)
 
   useEffect(() => {
@@ -56,40 +79,36 @@ export default function App({
     }
   }, [navIsOpen])
 
-  const Layout = Component.layoutProps?.Layout || Fragment
-  const layoutProps = Component.layoutProps?.Layout
-    ? { layoutProps: Component.layoutProps, navIsOpen, setNavIsOpen }
-    : {}
   const showHeader = router.pathname !== '/'
   const meta = Component.layoutProps?.meta || {}
-  const description =
-    meta.metaDescription ||
-    meta.description ||
-    'Documentation for the Tailwind CSS framework.'
   let image = meta.ogImage ?? meta.image
   image = image
     ? `https://tailwindcss.com${image.default?.src ?? image.src ?? image}`
     : `https://tailwindcss.com/api/og?path=${router.pathname}`
 
-  if (router.pathname.startsWith('/examples/')) {
-    return <Component {...pageProps} />
-  }
-
   let section =
     meta.section ||
-    Object.entries(Component.layoutProps?.Layout?.nav ?? {}).find(([, items]) =>
+    Object.entries(documentationNav).find(([, items]) =>
       items.find(({ href }) => href === router.pathname)
     )?.[0]
 
+  const { currentSection, registerHeading, unregisterHeading } =
+    useTableOfContents(Component.layoutProps?.tableOfContents ?? [])
+  let { prev, next } = usePrevNext(documentationNav)
+
+  console.log({
+    section,
+    nav: documentationNav
+  })
+
   return (
     <>
-      <Title>{meta.metaTitle || meta.title}</Title>
-      {meta.ogTitle && <OgTitle>{meta.ogTitle}</OgTitle>}
-      <Description>{description}</Description>
-      {meta.ogDescription && (
-        <OgDescription>{meta.ogDescription}</OgDescription>
-      )}
       <Head>
+        <title>{meta.title || config.name}</title>
+        <meta
+          name="description"
+          content={meta.description || config.description || config.name}
+        />
         <meta
           key="twitter:card"
           name="twitter:card"
@@ -113,7 +132,7 @@ export default function App({
         <meta
           key="og:url"
           property="og:url"
-          content={`https://tailwindcss.com${router.pathname}`}
+          content={`${config.domain}${router.pathname}`}
         />
         <meta
           key="og:type"
@@ -125,41 +144,63 @@ export default function App({
           property="og:image"
           content={image}
         />
-        <link
-          rel="alternate"
-          type="application/rss+xml"
-          title="RSS 2.0"
-          href="/feeds/feed.xml"
-        />
-        <link
-          rel="alternate"
-          type="application/atom+xml"
-          title="Atom 1.0"
-          href="/feeds/atom.xml"
-        />
-        <link
-          rel="alternate"
-          type="application/json"
-          title="JSON Feed"
-          href="/feeds/feed.json"
-        />
       </Head>
       <SearchProvider>
         {showHeader && (
           <Header
-            hasNav={Boolean(Component.layoutProps?.Layout?.nav)}
+            hasNav={Boolean(documentationNav)}
             navIsOpen={navIsOpen}
             onNavToggle={isOpen => setNavIsOpen(isOpen)}
             title={meta.title}
             section={section}
           />
         )}
-        <Layout {...layoutProps}>
-          <Component
-            section={section}
-            {...pageProps}
-          />
-        </Layout>
+        <SidebarLayout
+          nav={documentationNav}
+          navIsOpen={navIsOpen}
+          setNavIsOpen={setNavIsOpen}
+          nav={documentationNav}
+        >
+          <div className="max-w-3xl mx-auto pt-10 xl:max-w-none xl:ml-0 xl:mr-[15.5rem] xl:pr-16">
+            <PageHeader
+              title={meta.title}
+              description={meta.description}
+              repo={meta.repo}
+              badge={meta.badge}
+              section={section}
+            />
+            <ContentsContext.Provider
+              value={{ registerHeading, unregisterHeading }}
+            >
+              <div
+                id="content-wrapper"
+                className="relative z-20 prose prose-slate mt-8 dark:prose-dark"
+              >
+                <MDXProvider components={{ Heading }}>
+                  <Component
+                    section={section}
+                    {...pageProps}
+                  />
+                </MDXProvider>
+              </div>
+            </ContentsContext.Provider>
+
+            <DocsFooter
+              previous={prev}
+              next={next}
+              meta={meta}
+            />
+
+            <div className="fixed z-20 top-[3.8125rem] bottom-0 right-[max(0px,calc(50%-45rem))] w-[19.5rem] py-10 overflow-y-auto hidden xl:block">
+              {(Component.layoutProps?.tableOfContents.length ?? 0) > 0 && (
+                <TableOfContents
+                  tableOfContents={Component.layoutProps?.tableOfContents!}
+                  currentSection={currentSection}
+                />
+              )}
+            </div>
+          </div>
+        </SidebarLayout>
       </SearchProvider>
     </>
   )

@@ -1,6 +1,6 @@
-
-export type TableOfContentsList = {
+export type TableOfContentsItem = {
   title: string
   slug: string
-  children: TableOfContentsList[0][]
-}[]
+  children: TableOfContentsItem[]
+}
+export type TableOfContentsList = TableOfContentsItem[]

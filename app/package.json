@@ -54,6 +54,7 @@
     "@types/react": "18.0.26",
     "glyphhanger": "^5.0.0",
     "prettier": "^2.5.0",
+    "prettier-plugin-organize-imports": "^3.2.1",
     "typescript": "4.9.4"
   }
 }

@@ -103,7 +103,7 @@ function Nav({
 }: {
   nav: any
   children: ReactNode
-  fallbackHref: string
+  fallbackHref?: string
   mobile?: boolean
 }) {
   const router = useRouter()
@@ -380,8 +380,9 @@ function TopLevelNav({ mobile }: { mobile: boolean }) {
 
   return (
     <>
-      {config.sidebar.links.map(link => (
+      {config.sidebar.links.map((link, idx) => (
         <TopLevelLink
+          key={idx}
           mobile={mobile}
           href={link.url}
           isActive={pathname.startsWith(link.url)}
@@ -550,17 +551,15 @@ export function SidebarLayout({
   nav,
   sidebar,
   fallbackHref,
-  layoutProps: { allowOverflow = true } = {}
+  allowOverflow = true
 }: {
   children: ReactNode
   navIsOpen: boolean
   setNavIsOpen?: (navIsOpen: boolean) => void
   nav: any
   sidebar: ReactNode
-  fallbackHref: string
-  layoutProps: {
-    allowOverflow?: boolean
-  }
+  fallbackHref?: string
+  allowOverflow?: boolean
 }) {
   return (
     <SidebarContext.Provider value={{ nav, navIsOpen, setNavIsOpen }}>

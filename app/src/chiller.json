@@ -2,6 +2,8 @@
   "name": "Vessel",
   "version": "1.0.0",
   "favicon": "favicon.ico",
+  "domain": "https://exobase-js.vercel.app",
+  "description": "",
   "logo": {
     "light": "logo.png",
     "dark": "logo.png"
@@ -49,8 +51,7 @@
       {
         "label": "Getting Started",
         "pages": [
-          "installation",
-          "core-concepts"
+          "installation"
         ]
       }
     ]

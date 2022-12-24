@@ -7,7 +7,6 @@ import {
   useContext,
   ReactNode
 } from 'react'
-import { ClassTable } from 'src/components/ClassTable'
 import { useRouter } from 'next/router'
 import { usePrevNext } from 'src/hooks/usePrevNext'
 import Link from 'next/link'
@@ -17,11 +16,17 @@ import clsx from 'clsx'
 import { DocsFooter } from 'src/components/DocsFooter'
 import { Heading } from 'src/components/Heading'
 import { MDXProvider } from '@mdx-js/react'
-import type { TableOfContentsList } from 'src/types'
+import type { TableOfContentsItem, TableOfContentsList } from 'src/types'
 
 export const ContentsContext = createContext()
 
-function TableOfContents({ tableOfContents, currentSection }) {
+export function TableOfContents({ 
+  tableOfContents, 
+  currentSection 
+}: {
+  tableOfContents: TableOfContentsList
+  currentSection: string
+}) {
   let sidebarContext = useContext(SidebarContext)
   let isMainNav = Boolean(sidebarContext)
 
@@ -31,7 +36,7 @@ function TableOfContents({ tableOfContents, currentSection }) {
     }
   }
 
-  function isActive(section) {
+  function isActive(section: TableOfContentsItem) {
     if (section.slug === currentSection) {
       return true
     }
@@ -110,7 +115,7 @@ function TableOfContents({ tableOfContents, currentSection }) {
   )
 }
 
-function useTableOfContents(tableOfContents) {
+export function useTableOfContents(tableOfContents: TableOfContentsList) {
   let [currentSection, setCurrentSection] = useState(tableOfContents[0]?.slug)
   let [headings, setHeadings] = useState([])
 
@@ -158,41 +163,11 @@ function useTableOfContents(tableOfContents) {
   return { currentSection, registerHeading, unregisterHeading }
 }
 
-export function ContentsLayoutOuter({ 
-  children, 
-  layoutProps, 
-  ...props 
-}: {
-  children: ReactNode
-  layoutProps: any
-}) {
-  const { currentSection, registerHeading, unregisterHeading } =
-    useTableOfContents(layoutProps.tableOfContents)
-
-  return (
-    <SidebarLayout
-      sidebar={
-        <div className="mb-8">
-          <TableOfContents
-            tableOfContents={layoutProps.tableOfContents}
-            currentSection={currentSection}
-          />
-        </div>
-      }
-      {...props}
-    >
-      <ContentsContext.Provider value={{ registerHeading, unregisterHeading }}>
-        {children}
-      </ContentsContext.Provider>
-    </SidebarLayout>
-  )
-}
-
 export function ContentsLayout({
   children,
   meta,
   classes,
-  tableOfContents,
+  tableOfContents: toc,
   section
 }: {
   children: ReactNode
@@ -201,14 +176,6 @@ export function ContentsLayout({
   tableOfContents: TableOfContentsList
   section: string
 }) {
-  const router = useRouter()
-  const toc: TableOfContentsList = [
-    ...(classes
-      ? [{ title: 'Quick reference', slug: 'class-reference', children: [] }]
-      : []),
-    ...tableOfContents
-  ]
-
   const { currentSection, registerHeading, unregisterHeading } =
     useTableOfContents(toc)
   let { prev, next } = usePrevNext()
@@ -219,42 +186,23 @@ export function ContentsLayout({
         title={meta.title}
         description={meta.description}
         repo={meta.repo}
-        badge={{ key: 'Tailwind CSS version', value: meta.featureVersion }}
+        badge={meta.badge}
         section={section}
       />
       <ContentsContext.Provider value={{ registerHeading, unregisterHeading }}>
-        {classes ? (
-          <>
-            <ClassTable {...classes} />
-            <div
-              id="content-wrapper"
-              className="relative z-20 prose prose-slate mt-12 dark:prose-dark"
-            >
-              <MDXProvider components={{ Heading }}>{children}</MDXProvider>
-            </div>
-          </>
-        ) : (
-          <div
-            id="content-wrapper"
-            className="relative z-20 prose prose-slate mt-8 dark:prose-dark"
-          >
-            <MDXProvider components={{ Heading }}>{children}</MDXProvider>
-          </div>
-        )}
+        <div
+          id="content-wrapper"
+          className="relative z-20 prose prose-slate mt-8 dark:prose-dark"
+        >
+          <MDXProvider components={{ Heading }}>{children}</MDXProvider>
+        </div>
       </ContentsContext.Provider>
 
       <DocsFooter
         previous={prev}
         next={next}
-      >
-        <Link
-          href={`https://github.com/tailwindlabs/tailwindcss.com/edit/master/src/pages${router.pathname}.mdx`}
-        >
-          <a className="hover:text-slate-900 dark:hover:text-slate-400">
-            Edit this page on GitHub
-          </a>
-        </Link>
-      </DocsFooter>
+        meta={meta}
+      />
 
       <div className="fixed z-20 top-[3.8125rem] bottom-0 right-[max(0px,calc(50%-45rem))] w-[19.5rem] py-10 overflow-y-auto hidden xl:block">
         {toc.length > 0 && (

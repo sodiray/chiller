@@ -3,7 +3,7 @@ import NextDocument, { Html, Head, Main, NextScript } from 'next/document'
 
 const FAVICON_VERSION = 3
 
-function v(href) {
+function v(href: string) {
   return `${href}?v=${FAVICON_VERSION}`
 }
 

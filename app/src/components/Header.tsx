@@ -1,14 +1,13 @@
-import Link from 'next/link'
-import { VersionSwitcher } from 'src/components/VersionSwitcher'
-import { SearchButton } from 'src/components/Search'
-import Router from 'next/router'
-import { Logo } from 'src/components/Logo'
 import { Dialog } from '@headlessui/react'
-import { useEffect, useState } from 'react'
 import clsx from 'clsx'
-import { ThemeSelect, ThemeToggle } from './ThemeToggle'
+import Link from 'next/link'
+import Router from 'next/router'
+import { useEffect, useState } from 'react'
+import { Logo } from 'src/components/Logo'
+import { VersionSwitcher } from 'src/components/VersionSwitcher'
 import config from 'src/config'
 import { Icon } from './Icon'
+import { ThemeSelect, ThemeToggle } from './ThemeToggle'
 
 export function NavPopover({
   display = 'md:hidden',
@@ -150,12 +149,10 @@ const DynamicNavLink = ({
 export function NavItems() {
   return (
     <>
-      {config.header.links.map(link => (
-        <>
-          <li>
-            <DynamicNavLink link={link} />
-          </li>
-        </>
+      {config.header.links.map((link, idx) => (
+        <li key={idx}>
+          <DynamicNavLink link={link} />
+        </li>
       ))}
     </>
   )
@@ -219,9 +216,7 @@ export function Header({
                   <Logo className="w-auto h-5" />
                 </a>
               </Link>
-              {config.versions && (
-                <VersionSwitcher />
-              )}
+              {config.versions && <VersionSwitcher />}
               <div className="relative hidden lg:flex items-center ml-auto justify-end w-full">
                 <nav className="text-sm leading-6 font-semibold text-slate-700 dark:text-slate-200">
                   <ul className="flex space-x-8">

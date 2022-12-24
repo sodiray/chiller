@@ -17,7 +17,7 @@ const fallbackLayouts = {
 }
 
 const fallbackDefaultExports = {
-  'src/pages/{docs,components}/**/*': ['src/layouts/ContentsLayout', 'ContentsLayout'],
+  'src/pages/docs/**/*': ['src/layouts/ContentsLayout', 'ContentsLayout'],
 }
 
 module.exports = withBundleAnalyzer({
@@ -67,37 +67,13 @@ module.exports = withBundleAnalyzer({
       }),
     })
 
-    let mdx = (plugins = []) => [
-      {
-        loader: '@mdx-js/loader',
-        options:
-          plugins === null
-            ? {}
-            : {
-              remarkPlugins: [
-                withTableOfContents,
-                withSyntaxHighlighting,
-                withNextLinks,
-                withSmartQuotes,
-                ...plugins,
-              ],
-              rehypePlugins: [withLinkRoles],
-            },
-      },
-      createLoader(function (source) {
-        let pathSegments = this.resourcePath.split(path.sep)
-        let slug =
-          pathSegments[pathSegments.length - 1] === 'index.mdx'
-            ? pathSegments[pathSegments.length - 2]
-            : pathSegments[pathSegments.length - 1].replace(/\.mdx$/, '')
-        return source + `\n\nexport const slug = '${slug}'`
-      }),
-    ]
-
-    function mainMdxLoader(plugins) {
-      return [
+    config.module.rules.push({
+      test: /\.mdx$/,
+      use: [
         options.defaultLoaders.babel,
+
         createLoader(function (source) {
+          console.log('x--> FIRST\n', source)
           if (source.includes('/*START_META*/')) {
             const [meta] = source.match(/\/\*START_META\*\/(.*?)\/\*END_META\*\//s)
             return 'export default ' + meta
@@ -106,7 +82,34 @@ module.exports = withBundleAnalyzer({
             source.replace(/export const/gs, 'const') + `\nMDXContent.layoutProps = layoutProps\n`
           )
         }),
-        ...mdx(plugins),
+
+        {
+          loader: '@mdx-js/loader',
+          /** @type {import('@mdx-js/loader').Options} */
+          options: {
+            remarkPlugins: [
+              withTableOfContents,
+              withSyntaxHighlighting,
+              withNextLinks,
+              withSmartQuotes,
+            ],
+            rehypePlugins: [withLinkRoles],
+          }
+        },
+
+        /**
+         * Generate slug and add to exports
+         */
+        createLoader(function (source) {
+          let pathSegments = this.resourcePath.split(path.sep)
+          let slug =
+            pathSegments[pathSegments.length - 1] === 'index.mdx'
+              ? pathSegments[pathSegments.length - 2]
+              : pathSegments[pathSegments.length - 1].replace(/\.mdx$/, '')
+          return source + `\n\nexport const slug = '${slug}'`
+        }),
+
+
         createLoader(function (source) {
           let fields = new URLSearchParams(this.resourceQuery.substr(1)).get('meta') ?? undefined
           let { attributes: meta, body } = frontMatter(source)
@@ -121,29 +124,32 @@ module.exports = withBundleAnalyzer({
           let extra = []
           let resourcePath = path.relative(__dirname, this.resourcePath)
 
-          if (!/^\s*export\s+(var|let|const)\s+Layout\s+=/m.test(source)) {
-            for (let glob in fallbackLayouts) {
-              if (minimatch(resourcePath, glob)) {
-                extra.push(
-                  `import { ${fallbackLayouts[glob][1]} as _Layout } from '${fallbackLayouts[glob][0]}'`,
-                  'export const Layout = _Layout'
-                )
-                break
-              }
-            }
-          }
+          // if (!/^\s*export\s+(var|let|const)\s+Layout\s+=/m.test(source)) {
+          //   for (let glob in fallbackLayouts) {
+          //     if (minimatch(resourcePath, glob)) {
+          //       extra.push(
+          //         `import { ${fallbackLayouts[glob][1]} as _Layout } from '${fallbackLayouts[glob][0]}'`,
+          //         'export const Layout = _Layout'
+          //       )
+          //       break
+          //     }
+          //   }
+          // }
+          console.log('x--> BEFORE\n', source)
 
-          if (!/^\s*export\s+default\s+/m.test(source.replace(/```(.*?)```/gs, ''))) {
-            for (let glob in fallbackDefaultExports) {
-              if (minimatch(resourcePath, glob)) {
-                extra.push(
-                  `import { ${fallbackDefaultExports[glob][1]} as _Default } from '${fallbackDefaultExports[glob][0]}'`,
-                  'export default _Default'
-                )
-                break
-              }
-            }
-          }
+          // if (!/^\s*export\s+default\s+/m.test(source.replace(/```(.*?)```/gs, ''))) {
+          //   for (let glob in fallbackDefaultExports) {
+          //     if (minimatch(resourcePath, glob)) {
+          //       extra.push(
+          //         `import { ${fallbackDefaultExports[glob][1]} as _Default } from '${fallbackDefaultExports[glob][0]}'`,
+          //         'export default _Default'
+          //       )
+          //       break
+          //     }
+          //   }
+          // }
+
+          console.log('x--> AFTER\n', source)
 
           let metaExport
           if (!/export\s+(const|let|var)\s+meta\s*=/.test(source)) {
@@ -152,6 +158,8 @@ module.exports = withBundleAnalyzer({
                 ? `export const meta = ${JSON.stringify(meta)}`
                 : `export const meta = /*START_META*/${JSON.stringify(meta || {})}/*END_META*/`
           }
+
+          
 
           return [
             ...(typeof fields === 'undefined' ? extra : []),
@@ -164,11 +172,6 @@ module.exports = withBundleAnalyzer({
             .join('\n\n')
         }),
       ]
-    }
-
-    config.module.rules.push({
-      test: /\.mdx$/,
-      use: mainMdxLoader(),
     })
 
     return config

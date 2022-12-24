@@ -52,6 +52,7 @@
   "devDependencies": {
     "@types/glob": "^8.0.0",
     "@types/react": "18.0.26",
+    "@types/slug": "^5.0.3",
     "@types/webpack-env": "^1.18.0",
     "glyphhanger": "^5.0.0",
     "prettier": "^2.5.0",

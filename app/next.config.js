@@ -87,20 +87,8 @@ module.exports = withBundleAnalyzer({
           }
         },
 
-        /**
-         * Generate slug and add to exports
-         */
         createLoader(function (source) {
-          let pathSegments = this.resourcePath.split(path.sep)
-          let slug =
-            pathSegments[pathSegments.length - 1] === 'index.mdx'
-              ? pathSegments[pathSegments.length - 2]
-              : pathSegments[pathSegments.length - 1].replace(/\.mdx$/, '')
-          return source + `\n\nexport const slug = '${slug}'`
-        }),
 
-
-        createLoader(function (source) {
           let fields = new URLSearchParams(this.resourceQuery.substr(1)).get('meta') ?? undefined
           let { attributes: meta, body } = frontMatter(source)
           if (fields) {

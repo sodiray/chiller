@@ -1,8 +1,7 @@
 import cmd from 'cmdish'
 import fse from 'fs-extra'
 import path from 'path'
-import { ChillerConfig } from '../types'
-import schema from './schema'
+import schema, { ChillerJsonConfig } from './schema'
 
 type Services = {
   cmd: typeof cmd
@@ -17,7 +16,7 @@ export const chillerJson = ({ cmd, fse }: Services) => ({
         'Chiller config file does not exist in the current directory'
       )
     }
-    return await schema.parseAsync(file) as ChillerConfig
+    return (await schema.parseAsync(file)) as ChillerJsonConfig
   }
 })
 

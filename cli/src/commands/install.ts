@@ -1,39 +1,51 @@
 import cmd from 'cmdish'
+import fse from 'fs-extra'
+import path from 'path'
 import cfg from '../chiller-config'
 import pkg from '../package'
 
 type Services = {
   cmd: typeof cmd
+  fse: typeof fse
   cfg: typeof cfg
 }
 
 const install =
-  ({ cmd, cfg }: Services) =>
-  async () => {
+  ({ cmd, fse, cfg }: Services) =>
+  async ({ force }: { force: boolean }) => {
     // - Read chiller json file to ensure it
     //   exists in the current directory
     await cfg.read()
 
-    // - Create .mojito directory and enter it
-    await cmd('mkdir .chiller')
-    await cmd('cd .chiller')
+    const exists = await fse.pathExists('./.chiller')
+    if (exists) {
+      if (force) await fse.remove('.chiller')
+      else return
+    }
 
-    // - Clone the rayepps/mojito repo into .mojito
-    await cmd('git clone https://github.com/rayepps/chiller.git')
+    // - Create .chiller directory and enter it
+    await fse.ensureDir('./.chiller')
+
+    // - Clone the rayepps/chiller repo into .chiller
+    await cmd('git clone https://github.com/rayepps/chiller.git .chiller')
+
+    const inChillerDir = {
+      cwd: path.join(process.cwd(), '.chiller')
+    }
+
+    // - Pull the tags
+    await cmd('git fetch --tags', inChillerDir)
 
     // - Checkout the ref/tag matching the currently
-    //   installed mojito cli version
-    await cmd(`git checkout ref/${pkg.version}`)
-
-    // - Enter the app directory where the actual
-    //   nextjs/react app is
-    await cmd('cd app')
+    //   installed chiller cli version
+    await cmd(`git checkout tags/${pkg.version} -b working`, inChillerDir)
 
     // - Install dependencies
-    await cmd('yarn')
+    await cmd('yarn', inChillerDir)
   }
 
 export default install({
   cmd,
+  fse,
   cfg
 })

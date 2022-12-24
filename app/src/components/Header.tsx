@@ -8,6 +8,8 @@ import { VersionSwitcher } from 'src/components/VersionSwitcher'
 import config from 'src/config'
 import { Icon } from './Icon'
 import { ThemeSelect, ThemeToggle } from './ThemeToggle'
+import { pages } from 'src/nav'
+import { sift, unique } from 'radash'
 
 export function NavPopover({
   display = 'md:hidden',
@@ -149,7 +151,7 @@ const DynamicNavLink = ({
 export function NavItems() {
   return (
     <>
-      {config.header.links.map((link, idx) => (
+      {config.header?.links?.map((link, idx) => (
         <li key={idx}>
           <DynamicNavLink link={link} />
         </li>
@@ -189,6 +191,9 @@ export function Header({
     }
   }, [isOpaque])
 
+  const allVersions = sift(unique([config.version, ...pages.map(p => p.meta.version)]))
+  const hasMutliVersions = allVersions.length > 1
+
   return (
     <>
       <div className="absolute z-20 top-0 inset-x-0 flex justify-center overflow-hidden pointer-events-none">
@@ -216,7 +221,7 @@ export function Header({
                   <Logo className="w-auto h-5" />
                 </a>
               </Link>
-              {config.versions && <VersionSwitcher />}
+              {hasMutliVersions && <VersionSwitcher />}
               <div className="relative hidden lg:flex items-center ml-auto justify-end w-full">
                 <nav className="text-sm leading-6 font-semibold text-slate-700 dark:text-slate-200">
                   <ul className="flex space-x-8">

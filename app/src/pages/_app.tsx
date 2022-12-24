@@ -1,5 +1,6 @@
 import ProgressBar from '@badrap/bar-of-progress'
 import { ResizeObserver } from '@juggle/resize-observer'
+// @ts-ignore
 import { MDXProvider } from '@mdx-js/react'
 import 'focus-visible'
 import type { AppProps } from 'next/app'
@@ -18,7 +19,7 @@ import { useTableOfContents } from 'src/hooks/useTableOfContents'
 import { SidebarLayout } from 'src/layouts/SidebarLayout'
 import { documentationNav } from 'src/nav'
 import { ContentsContext } from 'src/state'
-import { TableOfContentsList } from 'src/types'
+import { Meta, TableOfContentsList } from 'src/types'
 import '../css/fonts.css'
 import '../css/main.css'
 
@@ -53,9 +54,7 @@ Router.events.on('routeChangeError', () => progress.finish())
 type Props = AppProps & {
   Component: AppProps['Component'] & {
     layoutProps?: {
-      Layout: FunctionComponent
-      meta: Record<string, string>
-      slug: string
+      meta: Meta
       tableOfContents: TableOfContentsList
     }
   }
@@ -75,22 +74,12 @@ export default function App({ Component, pageProps, router }: Props) {
     }
   }, [navIsOpen])
 
-  const showHeader = router.pathname !== '/'
-  const meta = Component.layoutProps?.meta || {}
-  let image = meta.ogImage ?? meta.image
-  image = image
-    ? `https://tailwindcss.com${image.default?.src ?? image.src ?? image}`
-    : `https://tailwindcss.com/api/og?path=${router.pathname}`
-
-  let section =
-    meta.section ||
-    Object.entries(documentationNav).find(([, items]) =>
-      items.find(({ href }) => href === router.pathname)
-    )?.[0]
+  const meta: Partial<Meta> = Component.layoutProps?.meta || {}
+  const section = meta.group ?? ''
 
   const { currentSection, registerHeading, unregisterHeading } =
     useTableOfContents(Component.layoutProps?.tableOfContents ?? [])
-  let { prev, next } = usePrevNext(documentationNav)
+  const { prev, next, current } = usePrevNext()
 
   return (
     <>
@@ -99,26 +88,6 @@ export default function App({ Component, pageProps, router }: Props) {
         <meta
           name="description"
           content={meta.description || config.description || config.name}
-        />
-        <meta
-          key="twitter:card"
-          name="twitter:card"
-          content="summary_large_image"
-        />
-        <meta
-          key="twitter:site"
-          name="twitter:site"
-          content="@tailwindcss"
-        />
-        <meta
-          key="twitter:image"
-          name="twitter:image"
-          content={image}
-        />
-        <meta
-          key="twitter:creator"
-          name="twitter:creator"
-          content="@tailwindcss"
         />
         <meta
           key="og:url"
@@ -130,35 +99,41 @@ export default function App({ Component, pageProps, router }: Props) {
           property="og:type"
           content="article"
         />
-        <meta
-          key="og:image"
-          property="og:image"
-          content={image}
-        />
+        {config.thumbnail && (
+          <>
+            <meta
+              key="twitter:image"
+              name="twitter:image"
+              content={`${config.domain}${config.thumbnail}`}
+            />
+            <meta
+              key="og:image"
+              property="og:image"
+              content={`${config.domain}${config.thumbnail}`}
+            />
+          </>
+        )}
       </Head>
       <SearchProvider>
-        {showHeader && (
-          <Header
-            hasNav={Boolean(documentationNav)}
-            navIsOpen={navIsOpen}
-            onNavToggle={isOpen => setNavIsOpen(isOpen)}
-            title={meta.title}
-            section={section}
-          />
-        )}
+        <Header
+          hasNav={Boolean(documentationNav)}
+          navIsOpen={navIsOpen}
+          onNavToggle={isOpen => setNavIsOpen(isOpen)}
+          title={meta.title ?? ''}
+          section={section}
+        />
         <SidebarLayout
           nav={documentationNav}
           navIsOpen={navIsOpen}
           setNavIsOpen={setNavIsOpen}
-          nav={documentationNav}
           section={section}
           tableOfContents={Component.layoutProps?.tableOfContents!}
         >
           <div className="max-w-3xl mx-auto pt-10 xl:max-w-none xl:ml-0 xl:mr-[15.5rem] xl:pr-16">
             <PageHeader
-              title={meta.title}
-              description={meta.description}
-              repo={meta.repo}
+              title={meta.title ?? ''}
+              description={meta.description ?? ''}
+              repo={meta.repo ?? ''}
               badge={meta.badge}
               section={section}
             />
@@ -181,13 +156,13 @@ export default function App({ Component, pageProps, router }: Props) {
             <DocsFooter
               previous={prev}
               next={next}
-              meta={meta}
+              current={current}
             />
 
             <div className="fixed z-20 top-[3.8125rem] bottom-0 right-[max(0px,calc(50%-45rem))] w-[19.5rem] py-10 overflow-y-auto hidden xl:block">
-              {(Component.layoutProps?.tableOfContents.length ?? 0) > 0 && (
+              {(Component.layoutProps?.tableOfContents?.length ?? 0) > 0 && (
                 <TableOfContents
-                  tableOfContents={Component.layoutProps?.tableOfContents!}
+                  tableOfContents={Component.layoutProps?.tableOfContents ?? []}
                   currentSection={currentSection}
                 />
               )}

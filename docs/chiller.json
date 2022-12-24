@@ -4,10 +4,7 @@
   "domain": "https://exobase-js.vercel.app",
   "description": "A library for doing things",
   "version": "v2.0.0",
-  "logo": {
-    "light": "logo.png",
-    "dark": "logo.png"
-  },
+  "logo": "logo.png",
   "pages": [
     "./*.mdx"
   ],

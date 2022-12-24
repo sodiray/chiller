@@ -8,7 +8,7 @@ import config from 'src/config'
 import { useActionKey } from 'src/hooks/useActionKey'
 import { useIsomorphicLayoutEffect } from 'src/hooks/useIsomorphicLayoutEffect'
 import { SidebarContext } from 'src/state'
-import { TableOfContentsList } from 'src/types'
+import { Nav, TableOfContentsList } from 'src/types'
 
 const NavItem = forwardRef(
   (
@@ -60,13 +60,13 @@ const NavItem = forwardRef(
  *
  * @param {Element} el
  */
-function nearestScrollableContainer(el: Element) {
+function nearestScrollableContainer(el?: Element) {
   /**
    * indicates if an element can be scrolled
    *
    * @param {Node} el
    */
-  function isScrollable(el) {
+  function isScrollable(el: any) {
     const style = window.getComputedStyle(el)
     const overflowX = style['overflowX']
     const overflowY = style['overflowY']
@@ -82,7 +82,7 @@ function nearestScrollableContainer(el: Element) {
   }
 
   while (el !== document.body && isScrollable(el) === false) {
-    el = el.parentNode || el.host
+    el = el?.parentNode || (el as any).host
   }
 
   return el
@@ -93,39 +93,33 @@ function Nav({
   fallbackHref,
   mobile = false
 }: {
-  nav: any
+  nav: Nav
   fallbackHref?: string
   mobile?: boolean
 }) {
   const router = useRouter()
-  const activeItemRef = useRef()
-  const previousActiveItemRef = useRef()
-  const scrollRef = useRef()
+  const activeItemRef = useRef<any>()
+  const previousActiveItemRef = useRef<any>()
+  const scrollRef = useRef<any>()
 
   useIsomorphicLayoutEffect(() => {
-    function updatePreviousRef() {
-      previousActiveItemRef.current = activeItemRef.current
-    }
-
     if (activeItemRef.current) {
+      previousActiveItemRef.current = activeItemRef.current
       if (activeItemRef.current === previousActiveItemRef.current) {
-        updatePreviousRef()
         return
       }
 
-      updatePreviousRef()
+      const scrollable = nearestScrollableContainer(scrollRef?.current)
 
-      const scrollable = nearestScrollableContainer(scrollRef.current)
-
-      const scrollRect = scrollable.getBoundingClientRect()
+      const scrollRect = scrollable?.getBoundingClientRect()
       const activeItemRect = activeItemRef.current.getBoundingClientRect()
 
-      const top = activeItemRef.current.offsetTop
-      const bottom = top - scrollRect.height + activeItemRect.height
+      const top = activeItemRef.current?.offsetTop
+      const bottom = top - scrollRect!.height + activeItemRect.height
 
-      if (scrollable.scrollTop > top || scrollable.scrollTop < bottom) {
-        scrollable.scrollTop =
-          top - scrollRect.height / 2 + activeItemRect.height / 2
+      if (scrollable!.scrollTop > top || scrollable!.scrollTop < bottom) {
+        scrollable!.scrollTop =
+          top - scrollRect!.height / 2 + activeItemRect.height / 2
       }
     }
   }, [router.pathname])
@@ -146,10 +140,7 @@ function Nav({
         {nav &&
           Object.keys(nav)
             .map(category => {
-              let publishedItems = nav[category].filter(
-                item => item.published !== false
-              )
-              if (publishedItems.length === 0 && !fallbackHref) return null
+              const pages = nav[category]
               return (
                 <li
                   key={category}
@@ -157,9 +148,8 @@ function Nav({
                 >
                   <h5
                     className={clsx('mb-8 lg:mb-3 font-semibold', {
-                      'text-slate-900 dark:text-slate-200':
-                        publishedItems.length > 0,
-                      'text-slate-400': publishedItems.length === 0
+                      'text-slate-900 dark:text-slate-200': pages.length > 0,
+                      'text-slate-400': pages.length === 0
                     })}
                   >
                     {category}
@@ -170,25 +160,23 @@ function Nav({
                       mobile ? 'dark:border-slate-700' : 'dark:border-slate-800'
                     )}
                   >
-                    {(fallbackHref ? nav[category] : publishedItems).map(
-                      (item, i) => {
-                        let isActive = item.match
-                          ? item.match.test(router.pathname)
-                          : item.href === router.pathname
-                        return (
-                          <NavItem
-                            key={i}
-                            href={item.href}
-                            isActive={isActive}
-                            ref={isActive ? activeItemRef : undefined}
-                            isPublished={item.published !== false}
-                            fallbackHref={fallbackHref}
-                          >
-                            {item.shortTitle || item.title}
-                          </NavItem>
-                        )
-                      }
-                    )}
+                    {pages.map((item, i) => {
+                      const isActive = item.meta.match
+                        ? new RegExp(item.meta.match).test(router.pathname)
+                        : item.href === router.pathname
+                      return (
+                        <NavItem
+                          key={i}
+                          href={item.href}
+                          isActive={isActive}
+                          ref={isActive ? activeItemRef : undefined}
+                          isPublished={item.meta.published !== 'false'}
+                          fallbackHref={fallbackHref ?? ''}
+                        >
+                          {item.meta.title}
+                        </NavItem>
+                      )
+                    })}
                   </ul>
                 </li>
               )
@@ -205,7 +193,7 @@ const DynamicSearchButton = () => {
     console.log('value:', e.target.value)
   }
   const focus = () => {}
-  if (config.search.type === 'algolia')
+  if (config.search?.type === 'algolia')
     return (
       <SearchButton className="hidden w-full lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700">
         {() => (
@@ -300,13 +288,23 @@ const TopLevelAnchor = forwardRef(
       shadow,
       activeBackground,
       mobile
+    }: {
+      children: ReactNode
+      href: string
+      className: string
+      icon: string
+      isActive: boolean
+      onClick?: () => void
+      shadow: string
+      activeBackground: string
+      mobile: boolean
     },
     ref
   ) => {
     return (
       <li>
         <a
-          ref={ref}
+          ref={ref as any}
           href={href}
           onClick={onClick}
           className={clsx(
@@ -343,12 +341,27 @@ const TopLevelAnchor = forwardRef(
   }
 )
 
-function TopLevelLink({ href, as, ...props }) {
+function TopLevelLink({
+  href,
+  as,
+  ...props
+}: {
+  href: string
+  as?: string
+  children: ReactNode
+  className: string
+  icon: ReactNode
+  isActive: boolean
+  onClick?: () => void
+  shadow: string
+  activeBackground: string
+  mobile: boolean
+}) {
   if (/^https?:\/\//.test(href)) {
     return (
       <TopLevelAnchor
         href={href}
-        {...props}
+        {...(props as any)}
       />
     )
   }
@@ -359,7 +372,7 @@ function TopLevelLink({ href, as, ...props }) {
       as={as}
       passHref
     >
-      <TopLevelAnchor {...props} />
+      <TopLevelAnchor {...(props as any)} />
     </Link>
   )
 }
@@ -369,23 +382,23 @@ function TopLevelNav({ mobile }: { mobile: boolean }) {
 
   return (
     <>
-      {config.sidebar.links.map((link, idx) => (
+      {config.sidebar?.links!.map((link, idx) => (
         <TopLevelLink
           key={idx}
           mobile={mobile}
-          href={link.url}
-          isActive={pathname.startsWith(link.url)}
+          href={link!.url ?? ''}
+          isActive={pathname.startsWith(link!.url ?? '')}
           className="mb-4"
           shadow="group-hover:shadow-sky-200 dark:group-hover:bg-sky-500"
           activeBackground="dark:bg-sky-500"
           icon={
             <SidebarIcon
-              icon={link.icon}
-              active={pathname.startsWith(link.url)}
+              icon={link?.icon ?? 'book'}
+              active={pathname.startsWith(link!.url!)}
             />
           }
         >
-          {link.label}
+          {link!.label}
         </TopLevelLink>
       ))}
     </>
@@ -546,7 +559,7 @@ export function SidebarLayout({
   children: ReactNode
   navIsOpen: boolean
   setNavIsOpen?: (navIsOpen: boolean) => void
-  nav: any
+  nav: Nav
   section: string
   fallbackHref?: string
   allowOverflow?: boolean

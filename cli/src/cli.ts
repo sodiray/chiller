@@ -41,12 +41,17 @@ program
 
 program
   .command('install')
-  //   .option('-u, --url <url>', 'Optional, override the exobase api url', API_URL)
+  .option(
+    '-f, --force',
+    'Optional, go through install even if chiller app is already installed',
+    false
+  )
   .description(
     'Initalize configuration for the project in the current directory'
   )
-  .action(async (args: { url: string }) => {
-    await install()
+  .action(async (args: { force: boolean }) => {
+    console.log(args)
+    await install(args)
   })
 
 // program.command('deploy')

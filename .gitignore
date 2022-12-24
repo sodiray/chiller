@@ -6,6 +6,9 @@ node_modules
 # testing
 coverage
 .chiller
+cli/**/chiller.json
+app/**/chiller.json
+app/public/*
 
 # next.js
 .next

@@ -1,36 +1,30 @@
-import { objectify } from 'radash'
-import config from 'src/config'
-import * as glob from 'glob'
+import { objectify, sift, unique } from 'radash'
+import { LayoutProps, Nav } from './types'
 
-const files = glob.sync('./pages/docs/**/*.mdx')
+const context = require.context(`./pages/`, true, /\.mdx$/)
 
-console.log('x--> files: ', files)
-
-const context = require.context(
-  `./pages/docs/**/*.mdx`,
-  false,
-  /\.mdx$/
-)
-
-const imported = context.keys().map(fileName => ({
-  fileName,
-  module: context(fileName),
-  slug: fileName.substr(2).replace(/\.mdx$/, '')
-}))
-
-console.log('x--> imported', imported)
-
-const pages = objectify(
-  imported,
-  x => x.slug,
-  x => ({
-    ...x.module.default,
-    href: `/docs/${x.slug}`
+export const pages = context
+  .keys()
+  .filter(fileName => fileName.startsWith('./'))
+  .map((fileName): Nav[0][0] => {
+    console.log('x--> fileName: ', fileName)
+    const module = context(fileName)
+    const lp = module.default.layoutProps as LayoutProps
+    const toc = module.default.layoutProps.tableOfContents
+    return {
+      meta: lp.meta,
+      tableOfContents: toc,
+      href: fileName.replace(/.mdx$/, '').replace(/^\.\//, '/')
+    }
   })
+  .filter(page => page.meta.hidden !== 'true')
+
+export const groups = sift(unique(pages.map(p => p.meta.group)))
+
+export const documentationNav: Nav = objectify(
+  groups,
+  g => g,
+  g => pages.filter(p => p.meta.group === g)
 )
 
-export const documentationNav = objectify(
-  config.sidebar.groups,
-  g => g.label,
-  g => g.pages.map(p => pages[p])
-)
+console.log('x--> documentationNav:', documentationNav)

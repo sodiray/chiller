@@ -1,14 +1,16 @@
-import Link from 'next/link'
 import clsx from 'clsx'
+import Link from 'next/link'
+import config from 'src/config'
+import { Page } from 'src/types'
 
 export function DocsFooter({
   previous,
   next,
-  meta
+  current
 }: {
-  previous: any
-  next: any
-  meta: any
+  previous: Page | undefined
+  next: Page | undefined
+  current: Page
 }) {
   return (
     <footer
@@ -35,14 +37,14 @@ export function DocsFooter({
                     strokeLinejoin="round"
                   />
                 </svg>
-                {previous.shortTitle || previous.title}
+                {previous.meta.title}
               </a>
             </Link>
           )}
           {next && (
             <Link href={next.href}>
               <a className="group ml-auto flex items-center hover:text-slate-900 dark:hover:text-white">
-                {next.shortTitle || next.title}
+                {next.meta.title}
                 <svg
                   viewBox="0 0 3 6"
                   className="ml-3 w-auto h-1.5 text-slate-400 overflow-visible group-hover:text-slate-600 dark:group-hover:text-slate-300"
@@ -65,13 +67,17 @@ export function DocsFooter({
         <div className="mb-6 sm:mb-0 sm:flex">
           <p>Powered By Chiller</p>
         </div>
-        <Link
-          href={`https://github.com/tailwindlabs/tailwindcss.com/edit/master/src/pages${meta.source}.mdx`}
-        >
-          <a className="hover:text-slate-900 dark:hover:text-slate-400">
-            Edit this page on GitHub
-          </a>
-        </Link>
+        {config.repo && (
+          <Link
+            href={`${config.repo.url}/edit/${
+              config.repo.branch ?? 'main'
+            }/src/pages${current.meta.source ?? current.href}.mdx`}
+          >
+            <a className="hover:text-slate-900 dark:hover:text-slate-400">
+              Edit this page on GitHub
+            </a>
+          </Link>
+        )}
       </div>
     </footer>
   )

@@ -6,11 +6,23 @@ type DeepPartial<T> = T extends object
     }
   : T | undefined
 
+export type ChillerLink = {
+  url: string
+  label: string
+  button: string
+  icon: 'book'
+}
+
 export type ChillerConfig = {
   name: string
   version: string
   favicon: string
   domain: string
+  repo: {
+    url: string
+    branch: string
+  }
+  thumbnail: string
   description: string
   pages: string | string[]
   logo: {
@@ -26,29 +38,17 @@ export type ChillerConfig = {
     }
   }
   header: {
-    links: {
-      url: string
-      label: string
-      button: string
-    }[]
+    links: ChillerLink[]
   }
   sidebar: {
-    links: {
-      url: string
-      label: string
-      button: string
-    }[]
+    links: ChillerLink[]
   }
   search: {
     type: 'pages' | 'algolia'
     key: string
   }
   footer: {
-    links: {
-      url: string
-      label: string
-      button: string
-    }[]
+    links: ChillerLink[]
   }
 }
 

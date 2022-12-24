@@ -7,7 +7,7 @@ export function PageHeader({
 }: {
   title: string
   description: string
-  repo: `http://${string}`
+  repo: string
   section: string
   badge?: string
 }) {

@@ -26,11 +26,11 @@ const sync =
     //   exists in the current directory
     const config = await cfg.read()
 
-    // - Copy the chiller config file into the
+    // - Write the chiller config file into the
     //   .chiller directory
-    await fse.copy(
-      'chiller.json',
-      path.join(process.cwd(), '.chiller/app/src/chiller.json')
+    await fse.writeJson(
+      path.join(process.cwd(), '.chiller/app/src/chiller.json'),
+      config
     )
 
     // - Find all mdx files that match the config

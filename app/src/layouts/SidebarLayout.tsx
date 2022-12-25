@@ -145,6 +145,8 @@ function Nav({
     }, {} as Nav)
   }
 
+  const filteredNav = filtered(navigation)
+
   return (
     <nav
       ref={scrollRef}
@@ -158,9 +160,9 @@ function Nav({
       </div>
       <ul>
         <TopLevelNav mobile={mobile} />
-        {Object.keys(filtered(navigation))
+        {Object.keys(filteredNav)
           .map(category => {
-            const pages = navigation[category]
+            const pages = filteredNav[category]
             return (
               <li
                 key={category}

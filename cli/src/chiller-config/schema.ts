@@ -6,6 +6,7 @@ const schema = z.object({
   version: z.string().optional(),
   favicon: z.string().optional(),
   domain: z.string().optional(),
+  index: z.string().optional(),
   description: z.string().optional(),
   pages: z.union([z.array(z.string()), z.string()]).transform(value => {
     return isArray(value) ? value : [value]

@@ -18,12 +18,13 @@ module.exports = withBundleAnalyzer({
     esmExternals: false,
   },
   async redirects() {
-    if (cfg.index) {
-      return [
-        { "source": "/", "destination": cfg.index.startsWith('/') ? cfg.index : '/' + cfg.index, "permanent": false }
-      ]
-    }
-    return []
+    return cfg.index
+      ? [{
+        "source": "/",
+        "destination": cfg.index.startsWith('/') ? cfg.index : '/' + cfg.index,
+        "permanent": false
+      }]
+      : []
   },
   webpack(config, options) {
 

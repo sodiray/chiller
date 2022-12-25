@@ -4,7 +4,7 @@ function isEditingContent(event: KeyboardEvent) {
   let element = event.target as Element
   let tagName = element.tagName
   return (
-    element.isContentEditable ||
+    (element as any).isContentEditable ||
     tagName === 'INPUT' ||
     tagName === 'SELECT' ||
     tagName === 'TEXTAREA'

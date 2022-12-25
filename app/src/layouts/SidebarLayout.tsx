@@ -404,7 +404,7 @@ function TopLevelLink({
 }
 
 function TopLevelNav({ mobile }: { mobile: boolean }) {
-  let { pathname } = useRouter()
+  const { pathname } = useRouter()
 
   return (
     <>

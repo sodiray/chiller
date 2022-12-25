@@ -10,8 +10,9 @@ export function DocsFooter({
 }: {
   previous: Page | undefined
   next: Page | undefined
-  current: Page
+  current: Page | undefined
 }) {
+  if (!current) return null
   return (
     <footer
       className={clsx(
@@ -70,7 +71,7 @@ export function DocsFooter({
         {config.repo && (
           <Link
             href={`${config.repo}/edit/${config.branch ?? 'main'}/src/pages${
-              current.meta.source ?? current.href
+              current?.meta.source ?? current?.href ?? ''
             }.mdx`}
           >
             <a className="hover:text-slate-900 dark:hover:text-slate-400">

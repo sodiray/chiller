@@ -9,9 +9,9 @@ export function useActionKey() {
   useEffect(() => {
     if (typeof navigator !== 'undefined') {
       if (/(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
-        setActionKey(ACTION_KEY_APPLE)
+        setActionKey(ACTION_KEY_APPLE as any)
       } else {
-        setActionKey(ACTION_KEY_DEFAULT)
+        setActionKey(ACTION_KEY_DEFAULT as any)
       }
     }
   }, [])

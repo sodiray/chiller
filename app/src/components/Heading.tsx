@@ -15,9 +15,9 @@ export function Heading({
   style = {},
   nextElement,
   ...props
-}) {
+}: any) {
   let Component = `h${level}`
-  const context = useContext(ContentsContext)
+  const context = useContext(ContentsContext) as any
 
   let ref = useRef()
   let top = useTop(ref)

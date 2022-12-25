@@ -10,7 +10,7 @@ export function TableOfContents({
   tableOfContents: TableOfContentsList
   currentSection: string
 }) {
-  let sidebarContext = useContext(SidebarContext)
+  let sidebarContext = useContext(SidebarContext) as any
   let isMainNav = Boolean(sidebarContext)
 
   function closeNav() {

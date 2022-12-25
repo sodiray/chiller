@@ -152,7 +152,7 @@ export function NavItems() {
     <>
       {config.header?.links?.map((link, idx) => (
         <li key={idx}>
-          <DynamicNavLink link={link} />
+          <DynamicNavLink link={link as any} />
         </li>
       ))}
     </>

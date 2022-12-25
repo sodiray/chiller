@@ -70,10 +70,11 @@ export function SearchProvider({ children }: { children: ReactNode }) {
       >
         {children}
       </SearchContext.Provider>
-      {config.algolia && isOpen &&
+      {config.algolia &&
+        isOpen &&
         createPortal(
           <DocSearchModal
-            initialQuery={initialQuery}
+            initialQuery={initialQuery as string}
             initialScrollY={window.scrollY}
             searchParameters={{
               facetFilters: 'version:v3',
@@ -141,7 +142,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
   )
 }
 
-function Hit({ hit, children }: { hit: { url: string }; children: ReactNode }) {
+function Hit({ hit, children }: { hit: any; children: ReactNode }) {
   return (
     <Link href={hit.url}>
       <a
@@ -159,13 +160,13 @@ function Hit({ hit, children }: { hit: { url: string }; children: ReactNode }) {
   )
 }
 
-export function SearchButton({ children, ...props }) {
+export function SearchButton({ children, ...props }: any) {
   let searchButtonRef = useRef()
   let actionKey = useActionKey()
   let { onOpen, onInput } = useContext(SearchContext)
 
   useEffect(() => {
-    function onKeyDown(event) {
+    function onKeyDown(event: any) {
       if (
         searchButtonRef &&
         searchButtonRef.current === document.activeElement &&

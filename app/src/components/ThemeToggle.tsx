@@ -11,12 +11,12 @@ function update() {
       window.matchMedia('(prefers-color-scheme: dark)').matches)
   ) {
     document.documentElement.classList.add('dark', 'changing-theme')
-    document
+    ;(document as any)
       .querySelector('meta[name="theme-color"]')
       .setAttribute('content', '#0B1120')
   } else {
     document.documentElement.classList.remove('dark', 'changing-theme')
-    document
+    ;(document as any)
       .querySelector('meta[name="theme-color"]')
       .setAttribute('content', '#f8fafc')
   }
@@ -43,7 +43,7 @@ let settings = [
   }
 ]
 
-function SunIcon({ selected, ...props }) {
+function SunIcon({ selected, ...props }: any) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -71,7 +71,7 @@ function SunIcon({ selected, ...props }) {
   )
 }
 
-function MoonIcon({ selected, ...props }) {
+function MoonIcon({ selected, ...props }: any) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -102,7 +102,7 @@ function MoonIcon({ selected, ...props }) {
   )
 }
 
-function PcIcon({ selected, ...props }) {
+function PcIcon({ selected, ...props }: any) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -189,16 +189,16 @@ function useTheme() {
     }
   }, [])
 
-  return [setting, setSetting]
+  return { setting, setSetting }
 }
 
 export function ThemeToggle({ panelClassName = 'mt-4' }) {
-  let [setting, setSetting] = useTheme()
+  const { setting, setSetting } = useTheme()
 
   return (
     <Listbox
       value={setting}
-      onChange={setSetting}
+      onChange={setSetting as any}
     >
       <Listbox.Label className="sr-only">Theme</Listbox.Label>
       <Listbox.Button type="button">
@@ -250,9 +250,9 @@ export function ThemeToggle({ panelClassName = 'mt-4' }) {
 }
 
 export function ThemeSelect() {
-  let [setting, setSetting] = useTheme()
+  const { setting, setSetting } = useTheme()
 
-  let { label } = settings.find(x => x.value === setting)
+  const { label } = settings.find(x => x.value === setting) as any
 
   return (
     <div className="flex items-center justify-between">
@@ -301,8 +301,8 @@ export function ThemeSelect() {
         </svg>
         <select
           id="theme"
-          value={setting}
-          onChange={e => setSetting(e.target.value)}
+          value={setting as any}
+          onChange={e => setSetting(e.target.value as any)}
           className="absolute appearance-none inset-0 w-full h-full opacity-0"
         >
           {settings.map(({ value, label }) => (

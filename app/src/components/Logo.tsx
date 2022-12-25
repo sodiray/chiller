@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import Image from 'next/image'
 import { trim } from 'radash'
 import { useEffect, useMemo, useState } from 'react'
 import config from 'src/config'
@@ -44,9 +45,11 @@ export function Logo({ className }: { className: string }) {
   if (theme === null) return null
   const logo = theme === 'light' ? config.logo!.light : config.logo!.dark
   return (
-    <img
-      className={clsx(className)}
-      src={'/' + trim(logo, '/')}
-    />
+    <div className={clsx(className, 'relative')}>
+      <Image
+        layout="fill"
+        src={'/' + trim(logo, '/')}
+      />
+    </div>
   )
 }

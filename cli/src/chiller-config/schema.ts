@@ -23,7 +23,20 @@ const schema = z.object({
       if (!value) return null
       if (isObject(value)) return value
       return { light: value, dark: value }
+    }),
+  sidebar: z
+    .object({
+      links: z
+        .array(
+          z.object({
+            url: z.string(),
+            icon: z.string().optional(),
+            label: z.string().optional()
+          })
+        )
+        .optional()
     })
+    .optional()
 })
 
 export type ChillerJsonConfig = z.infer<typeof schema>

@@ -46,6 +46,16 @@ const build =
       path.join(process.cwd(), '.chiller/app/.next'),
       path.join(process.cwd(), '.next')
     )
+
+    // - Copy the public directory from the .chiller
+    //   directory up to the current working directory
+    //   next needs it to be next door to .next when it
+    //   reads the build output
+    await fse.ensureDir(path.join(process.cwd(), 'public'))
+    await fse.copy(
+      path.join(process.cwd(), '.chiller/app/public'),
+      path.join(process.cwd(), 'public')
+    )
   }
 
 export default build({

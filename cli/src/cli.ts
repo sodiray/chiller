@@ -16,16 +16,16 @@ program
 program
   .command('dev')
   .description('Authenticate with exobase to enable publish and deploy')
-  //   .option('-u, --url <url>', 'Optional, override the exobase api url', API_URL)
   .action(async (args: { url: string }) => {
+    console.log('🥶 starting your local chiller app...')
     await dev()
   })
 
 program
   .command('sync')
   .description('Authenticate with exobase to enable publish and deploy')
-  //   .option('-u, --url <url>', 'Optional, override the exobase api url', API_URL)
   .action(async (args: { url: string }) => {
+    console.log('🥶 syncing your files with your chiller app...')
     await sync()
   })
 
@@ -40,6 +40,7 @@ program
     'Initalize configuration for the project in the current directory'
   )
   .action(async (args: { ci: boolean }) => {
+    console.log('🥶 building your chiller app...')
     await build(args)
   })
 
@@ -54,28 +55,16 @@ program
     'Initalize configuration for the project in the current directory'
   )
   .action(async (args: { force: boolean }) => {
-    console.log(args)
+    console.log('🥶 installing chiller app in .chiller directory...')
     await install(args)
   })
-
-// program.command('deploy')
-//   .description('Deploy a service to via exobase')
-//   .option('-u, --url <url>', 'Optional, override the exobase api url', API_URL)
-//   .option('-f, --follow', 'Optional, listen for logs and stream to console', false)
-//   .argument('[path]', 'Optional directory path to the service source. Default: cwd', process.cwd())
-//   .action(async (root, args) => {
-//     await deploy({
-//       url: args.url,
-//       root: root,
-//       follow: args.follow
-//     })
-//   })
 
 program
   .parseAsync(process.argv)
   .then(() => {
-    console.log(chalk.green('done!'))
+    console.log(chalk.green('🥶 done!'))
   })
   .catch(err => {
     console.error(err)
+    process.exit(1)
   })

@@ -23,10 +23,19 @@ const build =
       throw new Error('First run chiller install and chiller sync')
     }
 
-    // - Install dependencies
+    // - Run the build
     await cmd('yarn build', {
       cwd: path.join(process.cwd(), '.chiller/app')
     })
+
+    // - Copy the build output (.next directory)
+    //   from the .chiller directory up to the
+    //   current working directory
+    await fse.ensureDir(path.join(process.cwd(), '.next'))
+    await fse.copy(
+      path.join(process.cwd(), '.chiller/app/.next'),
+      path.join(process.cwd(), '.next')
+    )
   }
 
 export default build({

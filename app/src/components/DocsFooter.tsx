@@ -69,9 +69,9 @@ export function DocsFooter({
         </div>
         {config.repo && (
           <Link
-            href={`${config.repo.url}/edit/${
-              config.repo.branch ?? 'main'
-            }/src/pages${current.meta.source ?? current.href}.mdx`}
+            href={`${config.repo}/edit/${config.branch ?? 'main'}/src/pages${
+              current.meta.source ?? current.href
+            }.mdx`}
           >
             <a className="hover:text-slate-900 dark:hover:text-slate-400">
               Edit this page on GitHub

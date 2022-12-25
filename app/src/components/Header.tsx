@@ -6,10 +6,9 @@ import { useEffect, useState } from 'react'
 import { Logo } from 'src/components/Logo'
 import { VersionSwitcher } from 'src/components/VersionSwitcher'
 import config from 'src/config'
+import { useVersioning } from 'src/state'
 import { Icon } from './Icon'
 import { ThemeSelect, ThemeToggle } from './ThemeToggle'
-import { pages } from 'src/nav'
-import { sift, unique } from 'radash'
 
 export function NavPopover({
   display = 'md:hidden',
@@ -161,19 +160,18 @@ export function NavItems() {
 }
 
 export function Header({
-  hasNav = false,
   navIsOpen,
   onNavToggle,
   title,
   section
 }: {
-  hasNav?: boolean
   navIsOpen: boolean
   onNavToggle?: (navIsOpen: boolean) => void
   title: string
   section: string
 }) {
   let [isOpaque, setIsOpaque] = useState(false)
+  const { versions, isVersioned } = useVersioning()
 
   useEffect(() => {
     let offset = 50
@@ -190,9 +188,6 @@ export function Header({
       window.removeEventListener('scroll', onScroll)
     }
   }, [isOpaque])
-
-  const allVersions = sift(unique([config.version, ...pages.map(p => p.meta.version)]))
-  const hasMutliVersions = allVersions.length > 1
 
   return (
     <>
@@ -211,7 +206,7 @@ export function Header({
           <div
             className={clsx(
               'py-4 border-b border-slate-900/10 lg:px-8 lg:border-0 dark:border-slate-300/10',
-              hasNav ? 'mx-4 lg:mx-0' : 'px-4'
+              'mx-4 lg:mx-0'
             )}
           >
             <div className="relative flex items-center">
@@ -221,7 +216,7 @@ export function Header({
                   <Logo className="w-auto h-5" />
                 </a>
               </Link>
-              {hasMutliVersions && <VersionSwitcher />}
+              {isVersioned && <VersionSwitcher />}
               <div className="relative hidden lg:flex items-center ml-auto justify-end w-full">
                 <nav className="text-sm leading-6 font-semibold text-slate-700 dark:text-slate-200">
                   <ul className="flex space-x-8">
@@ -240,55 +235,53 @@ export function Header({
               </div>
             </div>
           </div>
-          {hasNav && (
-            <div className="flex items-center p-4 border-b border-slate-900/10 lg:hidden dark:border-slate-50/[0.06]">
-              <button
-                type="button"
-                onClick={() => onNavToggle?.(!navIsOpen)}
-                className="text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300"
+          <div className="flex items-center p-4 border-b border-slate-900/10 lg:hidden dark:border-slate-50/[0.06]">
+            <button
+              type="button"
+              onClick={() => onNavToggle?.(!navIsOpen)}
+              className="text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300"
+            >
+              <span className="sr-only">Navigation</span>
+              <svg
+                width="24"
+                height="24"
               >
-                <span className="sr-only">Navigation</span>
-                <svg
-                  width="24"
-                  height="24"
-                >
-                  <path
-                    d="M5 6h14M5 12h14M5 18h14"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </button>
-              {title && (
-                <ol className="ml-4 flex text-sm leading-6 whitespace-nowrap min-w-0">
-                  {section && (
-                    <li className="flex items-center">
-                      {section}
-                      <svg
-                        width="3"
-                        height="6"
-                        aria-hidden="true"
-                        className="mx-3 overflow-visible text-slate-400"
-                      >
-                        <path
-                          d="M0 0L3 3L0 6"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                    </li>
-                  )}
-                  <li className="font-semibold text-slate-900 truncate dark:text-slate-200">
-                    {title}
+                <path
+                  d="M5 6h14M5 12h14M5 18h14"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+            {title && (
+              <ol className="ml-4 flex text-sm leading-6 whitespace-nowrap min-w-0">
+                {section && (
+                  <li className="flex items-center">
+                    {section}
+                    <svg
+                      width="3"
+                      height="6"
+                      aria-hidden="true"
+                      className="mx-3 overflow-visible text-slate-400"
+                    >
+                      <path
+                        d="M0 0L3 3L0 6"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      />
+                    </svg>
                   </li>
-                </ol>
-              )}
-            </div>
-          )}
+                )}
+                <li className="font-semibold text-slate-900 truncate dark:text-slate-200">
+                  {title}
+                </li>
+              </ol>
+            )}
+          </div>
         </div>
       </div>
     </>

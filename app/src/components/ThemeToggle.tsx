@@ -2,18 +2,7 @@ import { Listbox } from '@headlessui/react'
 import clsx from 'clsx'
 import { Fragment, useEffect, useRef } from 'react'
 import { useIsomorphicLayoutEffect } from 'src/hooks/useIsomorphicLayoutEffect'
-import create from 'zustand'
-
-type Theme = 'light' | 'dark' | 'system'
-type Setting = {
-  setting: Theme | null
-  setSetting: (setting: Theme) => void
-}
-
-const useSetting = create<Setting>()(set => ({
-  setting: null,
-  setSetting: (setting: Theme) => set({ setting })
-}))
+import { useSetting } from 'src/state'
 
 function update() {
   if (

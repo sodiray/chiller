@@ -7,8 +7,9 @@ import { SearchButton } from 'src/components/Search'
 import config from 'src/config'
 import { useActionKey } from 'src/hooks/useActionKey'
 import { useIsomorphicLayoutEffect } from 'src/hooks/useIsomorphicLayoutEffect'
-import { SidebarContext } from 'src/state'
-import { Nav, TableOfContentsList } from 'src/types'
+import { nav } from 'src/nav'
+import { SidebarContext, useVersioning } from 'src/state'
+import type { Nav, TableOfContentsList } from 'src/types'
 
 const NavItem = forwardRef(
   (
@@ -89,11 +90,9 @@ function nearestScrollableContainer(el?: Element) {
 }
 
 function Nav({
-  nav,
   fallbackHref,
   mobile = false
 }: {
-  nav: Nav
   fallbackHref?: string
   mobile?: boolean
 }) {
@@ -101,6 +100,7 @@ function Nav({
   const activeItemRef = useRef<any>()
   const previousActiveItemRef = useRef<any>()
   const scrollRef = useRef<any>()
+  const { version, isVersioned } = useVersioning()
 
   useIsomorphicLayoutEffect(() => {
     if (activeItemRef.current) {
@@ -124,6 +124,8 @@ function Nav({
     }
   }, [router.pathname])
 
+  const navigation = nav(version ?? 'deafult')
+
   return (
     <nav
       ref={scrollRef}
@@ -137,51 +139,50 @@ function Nav({
       </div>
       <ul>
         <TopLevelNav mobile={mobile} />
-        {nav &&
-          Object.keys(nav)
-            .map(category => {
-              const pages = nav[category]
-              return (
-                <li
-                  key={category}
-                  className="mt-12 lg:mt-8"
+        {Object.keys(navigation)
+          .map(category => {
+            const pages = navigation[category]
+            return (
+              <li
+                key={category}
+                className="mt-12 lg:mt-8"
+              >
+                <h5
+                  className={clsx('mb-8 lg:mb-3 font-semibold', {
+                    'text-slate-900 dark:text-slate-200': pages.length > 0,
+                    'text-slate-400': pages.length === 0
+                  })}
                 >
-                  <h5
-                    className={clsx('mb-8 lg:mb-3 font-semibold', {
-                      'text-slate-900 dark:text-slate-200': pages.length > 0,
-                      'text-slate-400': pages.length === 0
-                    })}
-                  >
-                    {category}
-                  </h5>
-                  <ul
-                    className={clsx(
-                      'space-y-6 lg:space-y-2 border-l border-slate-100',
-                      mobile ? 'dark:border-slate-700' : 'dark:border-slate-800'
-                    )}
-                  >
-                    {pages.map((item, i) => {
-                      const isActive = item.meta.match
-                        ? new RegExp(item.meta.match).test(router.pathname)
-                        : item.href === router.pathname
-                      return (
-                        <NavItem
-                          key={i}
-                          href={item.href}
-                          isActive={isActive}
-                          ref={isActive ? activeItemRef : undefined}
-                          isPublished={item.meta.published !== 'false'}
-                          fallbackHref={fallbackHref ?? ''}
-                        >
-                          {item.meta.title}
-                        </NavItem>
-                      )
-                    })}
-                  </ul>
-                </li>
-              )
-            })
-            .filter(Boolean)}
+                  {category}
+                </h5>
+                <ul
+                  className={clsx(
+                    'space-y-6 lg:space-y-2 border-l border-slate-100',
+                    mobile ? 'dark:border-slate-700' : 'dark:border-slate-800'
+                  )}
+                >
+                  {pages.map((item, i) => {
+                    const isActive = item.meta.match
+                      ? new RegExp(item.meta.match).test(router.pathname)
+                      : item.href === router.pathname
+                    return (
+                      <NavItem
+                        key={i}
+                        href={item.href}
+                        isActive={isActive}
+                        ref={isActive ? activeItemRef : undefined}
+                        isPublished={item.meta.published !== 'false'}
+                        fallbackHref={fallbackHref ?? ''}
+                      >
+                        {item.meta.title}
+                      </NavItem>
+                    )
+                  })}
+                </ul>
+              </li>
+            )
+          })
+          .filter(Boolean)}
       </ul>
     </nav>
   )
@@ -550,7 +551,6 @@ export function SidebarLayout({
   children,
   navIsOpen,
   setNavIsOpen,
-  nav,
   fallbackHref,
   tableOfContents,
   section,
@@ -559,21 +559,17 @@ export function SidebarLayout({
   children: ReactNode
   navIsOpen: boolean
   setNavIsOpen?: (navIsOpen: boolean) => void
-  nav: Nav
   section: string
   fallbackHref?: string
   allowOverflow?: boolean
   tableOfContents: TableOfContentsList
 }) {
   return (
-    <SidebarContext.Provider value={{ nav, navIsOpen, setNavIsOpen }}>
+    <SidebarContext.Provider value={{ navIsOpen, setNavIsOpen }}>
       <Wrapper allowOverflow={allowOverflow}>
         <div className="max-w-8xl mx-auto px-4 sm:px-6 md:px-8">
           <div className="hidden lg:block fixed z-20 inset-0 top-[3.8125rem] left-[max(0px,calc(50%-45rem))] right-auto w-[19.5rem] pb-10 px-8 overflow-y-auto">
-            <Nav
-              nav={nav}
-              fallbackHref={fallbackHref}
-            />
+            <Nav fallbackHref={fallbackHref} />
           </div>
           <div className="lg:pl-[19.5rem]">{children}</div>
         </div>

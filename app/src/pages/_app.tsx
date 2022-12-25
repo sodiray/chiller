@@ -6,7 +6,7 @@ import 'focus-visible'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import Router from 'next/router'
-import { FunctionComponent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DocsFooter } from 'src/components/DocsFooter'
 import { Header } from 'src/components/Header'
 import { Heading } from 'src/components/Heading'
@@ -17,7 +17,6 @@ import config from 'src/config'
 import { usePrevNext } from 'src/hooks/usePrevNext'
 import { useTableOfContents } from 'src/hooks/useTableOfContents'
 import { SidebarLayout } from 'src/layouts/SidebarLayout'
-import { documentationNav } from 'src/nav'
 import { ContentsContext } from 'src/state'
 import { Meta, TableOfContentsList } from 'src/types'
 import '../css/fonts.css'
@@ -116,14 +115,12 @@ export default function App({ Component, pageProps, router }: Props) {
       </Head>
       <SearchProvider>
         <Header
-          hasNav={Boolean(documentationNav)}
           navIsOpen={navIsOpen}
           onNavToggle={isOpen => setNavIsOpen(isOpen)}
           title={meta.title ?? ''}
           section={section}
         />
         <SidebarLayout
-          nav={documentationNav}
           navIsOpen={navIsOpen}
           setNavIsOpen={setNavIsOpen}
           section={section}

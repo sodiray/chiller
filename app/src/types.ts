@@ -19,6 +19,7 @@ export type LayoutProps = {
 }
 
 export type Page = {
+  id: string
   tableOfContents: TableOfContentsList
   meta: Meta
   href: string

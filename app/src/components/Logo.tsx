@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { trim } from 'radash'
 import { useEffect, useMemo, useState } from 'react'
 import config from 'src/config'
 
@@ -45,7 +46,7 @@ export function Logo({ className }: { className: string }) {
   return (
     <img
       className={clsx(className)}
-      src={logo}
+      src={'/' + trim(logo, '/')}
     />
   )
 }

@@ -1,4 +1,3 @@
-const path = require('path')
 const { createLoader } = require('simple-functional-loader')
 const frontMatter = require('front-matter')
 const withSmartQuotes = require('@silvenon/remark-smartypants')
@@ -6,6 +5,7 @@ const { withTableOfContents } = require('./remark/withTableOfContents')
 const { withSyntaxHighlighting } = require('./remark/withSyntaxHighlighting')
 const { withNextLinks } = require('./remark/withNextLinks')
 const { withLinkRoles } = require('./rehype/withLinkRoles')
+const cfg = require('./src/chiller.json')
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
@@ -18,10 +18,12 @@ module.exports = withBundleAnalyzer({
     esmExternals: false,
   },
   async redirects() {
-    return [
-      { "source": "/", "destination": "/docs", "permanent": false },
-      { "source": "/docs", "destination": "/docs/installation", "permanent": false },
-    ]
+    if (cfg.index) {
+      return [
+        { "source": "/", "destination": cfg.index.startsWith('/') ? cfg.index : '/' + cfg.index, "permanent": false }
+      ]
+    }
+    return []
   },
   webpack(config, options) {
 

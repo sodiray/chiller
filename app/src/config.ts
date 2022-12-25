@@ -18,10 +18,8 @@ export type ChillerConfig = {
   version: string
   favicon: string
   domain: string
-  repo: {
-    url: string
-    branch: string
-  }
+  branch: string
+  repo: string
   thumbnail: string
   description: string
   pages: string | string[]

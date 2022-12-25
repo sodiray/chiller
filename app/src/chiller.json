@@ -3,11 +3,14 @@
   "favicon": "favicon.ico",
   "domain": "https://exobase-js.vercel.app",
   "description": "A library for doing things",
+  "index": "welcome",
   "version": "v2.0.0",
   "logo": {
     "light": "logo.png",
     "dark": "logo.png"
   },
+  "repo": "https://github.com/rayepps/radash",
+  "branch": "master",
   "pages": [
     "./*.mdx"
   ],
@@ -35,7 +38,7 @@
   "sidebar": {
     "links": [
       {
-        "url": "/docs",
+        "url": "/welcome",
         "icon": "book",
         "label": "Documentation"
       },

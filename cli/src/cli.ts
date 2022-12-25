@@ -31,12 +31,16 @@ program
 
 program
   .command('build')
-  //   .option('-u, --url <url>', 'Optional, override the exobase api url', API_URL)
+  .option(
+    '--ci',
+    'Optional, tells the build to operate in ci mode. Useful when running build in Vercel',
+    false
+  )
   .description(
     'Initalize configuration for the project in the current directory'
   )
-  .action(async (args: { url: string }) => {
-    await build()
+  .action(async (args: { ci: boolean }) => {
+    await build(args)
   })
 
 program

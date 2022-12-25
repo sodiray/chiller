@@ -25,3 +25,7 @@ Tailwind CSS uses [Next.js](https://nextjs.org/) for its documentation. Here is 
     ```sh
     yarn dev
     ```
+
+## Warning
+
+Do not change the version of Next in this app without also changing the version we use in the CLI. See `cli/src/commands/build`.

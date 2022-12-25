@@ -29,19 +29,21 @@ const install =
     // - Clone the rayepps/chiller repo into .chiller
     await cmd('git clone https://github.com/rayepps/chiller.git .chiller')
 
-    const inChillerDir = {
-      cwd: path.join(process.cwd(), '.chiller')
-    }
-
     // - Pull the tags
-    await cmd('git fetch --tags', inChillerDir)
+    await cmd('git fetch --tags', {
+      cwd: path.join(process.cwd(), '.chiller')
+    })
 
     // - Checkout the ref/tag matching the currently
     //   installed chiller cli version
-    await cmd(`git checkout tags/${pkg.version} -b working`, inChillerDir)
+    await cmd(`git checkout tags/${pkg.version} -b working`, {
+      cwd: path.join(process.cwd(), '.chiller')
+    })
 
     // - Install dependencies
-    await cmd('yarn', inChillerDir)
+    await cmd('yarn', {
+      cwd: path.join(process.cwd(), '.chiller/app')
+    })
   }
 
 export default install({

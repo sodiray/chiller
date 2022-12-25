@@ -1,13 +1,15 @@
-import { isObject } from 'radash'
+import { isArray, isObject } from 'radash'
 import z from 'zod'
 
 const schema = z.object({
-  name: z.string().nullable(),
-  version: z.string().nullable(),
-  favicon: z.string().nullable(),
-  domain: z.string().nullable(),
-  description: z.string().nullable(),
-  pages: z.array(z.string()),
+  name: z.string().optional(),
+  version: z.string().optional(),
+  favicon: z.string().optional(),
+  domain: z.string().optional(),
+  description: z.string().optional(),
+  pages: z.union([z.array(z.string()), z.string()]).transform(value => {
+    return isArray(value) ? value : [value]
+  }),
   logo: z
     .union([
       z.string(),
@@ -16,7 +18,7 @@ const schema = z.object({
         dark: z.string()
       })
     ])
-    .nullable()
+    .optional()
     .transform(value => {
       if (!value) return null
       if (isObject(value)) return value

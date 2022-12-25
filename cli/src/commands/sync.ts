@@ -59,9 +59,10 @@ const sync =
     }))
 
     // - Copy all the mdx files into the app directory
-    await parallel(5, files, async ({ source, dest }) =>
-      fse.copyFile(source, dest)
-    )
+    await parallel(5, files, async ({ source, dest }) => {
+      await fse.ensureDir(path.dirname(dest))
+      await fse.copyFile(source, dest)
+    })
 
     // - Copy all the static files (images) into the
     //   .chiller public directory
@@ -69,6 +70,9 @@ const sync =
       unique([config.logo.light, config.logo.dark, config.favicon])
     )
     for (const img of images) {
+      await fse.ensureDir(
+        path.dirname(path.join(process.cwd(), '.chiller/app/public', img))
+      )
       await fse.copyFile(
         img,
         path.join(process.cwd(), '.chiller/app/public', img)

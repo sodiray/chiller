@@ -127,7 +127,7 @@ function Nav({
     }
   }, [router.pathname])
 
-  const navigation = nav(version ?? 'deafult')
+  const navigation = nav(version ?? 'default')
 
   const filtered = (n: Nav): Nav => {
     if (!filter) return n

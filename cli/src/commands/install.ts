@@ -40,8 +40,9 @@ const install =
       cwd: path.join(process.cwd(), '.chiller')
     })
 
-    // - Install dependencies
-    await cmd('yarn', {
+    // - Install dependencies. Force turn of production. In
+    //   production mode yarn will not install the dev deps
+    await cmd('yarn --production=false', {
       cwd: path.join(process.cwd(), '.chiller/app')
     })
   }

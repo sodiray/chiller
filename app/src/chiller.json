@@ -54,9 +54,10 @@
       }
     ]
   },
-  "search": {
-    "type": "pages",
-    "key": "....."
+  "__algolia__": {
+    "index": "tailwindcss",
+    "key": "5fc87cef58bb80203d2207578309fab6",
+    "id": "KNPXZI5B0M"
   },
   "footer": {
     "links": [

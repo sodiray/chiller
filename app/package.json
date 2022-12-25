@@ -43,6 +43,7 @@
     "radash": "^10.3.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-hotkeys-hook": "^4.0.8",
     "redent": "^3.0.0",
     "simple-functional-loader": "^1.2.1",
     "tailwindcss": "^3.2.4",
@@ -52,6 +53,7 @@
   "devDependencies": {
     "@types/glob": "^8.0.0",
     "@types/react": "18.0.26",
+    "@types/react-dom": "^18.0.10",
     "@types/slug": "^5.0.3",
     "@types/webpack-env": "^1.18.0",
     "glyphhanger": "^5.0.0",

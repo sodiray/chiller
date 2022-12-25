@@ -2,14 +2,16 @@ import { Dialog } from '@headlessui/react'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { mapValues, sift } from 'radash'
 import { ChangeEventHandler, forwardRef, ReactNode, Ref, useRef } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { SearchButton } from 'src/components/Search'
 import config from 'src/config'
 import { useActionKey } from 'src/hooks/useActionKey'
 import { useIsomorphicLayoutEffect } from 'src/hooks/useIsomorphicLayoutEffect'
 import { nav } from 'src/nav'
-import { SidebarContext, useVersioning } from 'src/state'
-import type { Nav, TableOfContentsList } from 'src/types'
+import { SidebarContext, useSearch, useVersioning } from 'src/state'
+import type { Nav } from 'src/types'
 
 const NavItem = forwardRef(
   (
@@ -100,7 +102,8 @@ function Nav({
   const activeItemRef = useRef<any>()
   const previousActiveItemRef = useRef<any>()
   const scrollRef = useRef<any>()
-  const { version, isVersioned } = useVersioning()
+  const { filter } = useSearch()
+  const { version } = useVersioning()
 
   useIsomorphicLayoutEffect(() => {
     if (activeItemRef.current) {
@@ -126,6 +129,22 @@ function Nav({
 
   const navigation = nav(version ?? 'deafult')
 
+  const filtered = (n: Nav): Nav => {
+    if (!filter) return n
+    const filteredNav = mapValues(n, pages =>
+      pages.filter(p => {
+        const content = sift([p.meta.title, p.meta.description])
+          .join(' ')
+          .toLowerCase()
+        return content.includes(filter.trim().toLowerCase())
+      })
+    )
+    return Object.keys(filteredNav).reduce((acc, key) => {
+      const pages = filteredNav[key]
+      return pages.length > 0 ? { ...acc, [key]: pages } : acc
+    }, {} as Nav)
+  }
+
   return (
     <nav
       ref={scrollRef}
@@ -139,7 +158,7 @@ function Nav({
       </div>
       <ul>
         <TopLevelNav mobile={mobile} />
-        {Object.keys(navigation)
+        {Object.keys(filtered(navigation))
           .map(category => {
             const pages = navigation[category]
             return (
@@ -189,12 +208,15 @@ function Nav({
 }
 
 const DynamicSearchButton = () => {
-  let actionKey = useActionKey()
+  const actionKey = useActionKey()
+  const ref = useRef<HTMLInputElement | null>(null)
+  const focus = () => ref.current?.focus()
+  useHotkeys('Meta+k', focus)
+  const { setFilter } = useSearch()
   const handleChange: ChangeEventHandler<HTMLInputElement> = e => {
-    console.log('value:', e.target.value)
+    setFilter(e.target.value ?? '')
   }
-  const focus = () => {}
-  if (config.search?.type === 'algolia')
+  if (config.algolia)
     return (
       <SearchButton className="hidden w-full lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700">
         {() => (
@@ -263,6 +285,7 @@ const DynamicSearchButton = () => {
         />
       </svg>
       <input
+        ref={ref}
         className="grow w-full bg-transparent"
         type="text"
         onChange={handleChange}
@@ -552,17 +575,13 @@ export function SidebarLayout({
   navIsOpen,
   setNavIsOpen,
   fallbackHref,
-  tableOfContents,
-  section,
   allowOverflow = true
 }: {
   children: ReactNode
   navIsOpen: boolean
   setNavIsOpen?: (navIsOpen: boolean) => void
-  section: string
   fallbackHref?: string
   allowOverflow?: boolean
-  tableOfContents: TableOfContentsList
 }) {
   return (
     <SidebarContext.Provider value={{ navIsOpen, setNavIsOpen }}>
@@ -602,7 +621,6 @@ export function SidebarLayout({
             </svg>
           </button>
           <Nav
-            nav={nav}
             fallbackHref={fallbackHref}
             mobile={true}
           />

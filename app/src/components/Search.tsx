@@ -1,23 +1,21 @@
-import {
-  useState,
-  useCallback,
-  useRef,
-  createContext,
-  useContext,
-  useEffect,
-  ReactNode
-} from 'react'
-import { createPortal } from 'react-dom'
-import Link from 'next/link'
-import Head from 'next/head'
-import { useRouter } from 'next/router'
 import { DocSearchModal } from '@docsearch/react'
 import clsx from 'clsx'
+import Head from 'next/head'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState
+} from 'react'
+import { createPortal } from 'react-dom'
+import config from 'src/config'
 import { useActionKey } from 'src/hooks/useActionKey'
-
-const INDEX_NAME = 'tailwindcss'
-const API_KEY = '5fc87cef58bb80203d2207578309fab6'
-const APP_ID = 'KNPXZI5B0M'
+import { useDocSearchKeyboardEvents } from 'src/hooks/useDocSearchKeyboardEvents'
 
 const SearchContext = createContext({
   isOpen: false,
@@ -58,7 +56,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
       <Head>
         <link
           rel="preconnect"
-          href={`https://${APP_ID}-dsn.algolia.net`}
+          href={`https://${config.algolia?.id!}-dsn.algolia.net`}
           crossOrigin="true"
         />
       </Head>
@@ -72,7 +70,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
       >
         {children}
       </SearchContext.Provider>
-      {isOpen &&
+      {config.algolia && isOpen &&
         createPortal(
           <DocSearchModal
             initialQuery={initialQuery}
@@ -83,9 +81,9 @@ export function SearchProvider({ children }: { children: ReactNode }) {
             }}
             placeholder="Search documentation"
             onClose={onClose}
-            indexName={INDEX_NAME}
-            apiKey={API_KEY}
-            appId={APP_ID}
+            indexName={config.algolia?.index!}
+            apiKey={config.algolia?.key!}
+            appId={config.algolia?.id!}
             navigator={{
               navigate({ itemUrl }: { itemUrl: string }) {
                 setIsOpen(false)
@@ -193,57 +191,5 @@ export function SearchButton({ children, ...props }) {
     >
       {typeof children === 'function' ? children({ actionKey }) : children}
     </button>
-  )
-}
-
-function useDocSearchKeyboardEvents({
-  isOpen,
-  onOpen,
-  onClose
-}: {
-  isOpen: boolean
-  onOpen?: () => void
-  onClose?: () => void
-}) {
-  useEffect(() => {
-    function onKeyDown(event) {
-      function open() {
-        // We check that no other DocSearch modal is showing before opening
-        // another one.
-        if (!document.body.classList.contains('DocSearch--active')) {
-          onOpen?.()
-        }
-      }
-
-      if (
-        (event.keyCode === 27 && isOpen) ||
-        (event.key === 'k' && (event.metaKey || event.ctrlKey)) ||
-        (!isEditingContent(event) && event.key === '/' && !isOpen)
-      ) {
-        event.preventDefault()
-
-        if (isOpen) {
-          onClose?.()
-        } else if (!document.body.classList.contains('DocSearch--active')) {
-          open()
-        }
-      }
-    }
-
-    window.addEventListener('keydown', onKeyDown)
-    return () => {
-      window.removeEventListener('keydown', onKeyDown)
-    }
-  }, [isOpen, onOpen, onClose])
-}
-
-function isEditingContent(event) {
-  let element = event.target
-  let tagName = element.tagName
-  return (
-    element.isContentEditable ||
-    tagName === 'INPUT' ||
-    tagName === 'SELECT' ||
-    tagName === 'TEXTAREA'
   )
 }

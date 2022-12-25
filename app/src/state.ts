@@ -4,28 +4,26 @@ import create from 'zustand'
 import config from './config'
 import { pages } from './nav'
 
+// TODO: Remove context and go all 
+// in with zustand
+
 export const ContentsContext = createContext({})
 export const SidebarContext = createContext({})
 
-type Theme = 'light' | 'dark' | 'system'
-type SettingState = {
-  setting: Theme | null
-  setSetting: (setting: Theme) => void
-}
+export const useSetting = create<{
+  setting: 'light' | 'dark' | 'system' | null
+  setSetting: (setting: 'light' | 'dark' | 'system') => void
+}>()(set => ({
+  setting: null,
+  setSetting: (setting: 'light' | 'dark' | 'system') => set({ setting })
+}))
 
-type VersionState = {
+export const useVersioning = create<{
   version: string | null
   versions: string[]
   isVersioned: boolean
   setVersion: (version: string) => void
-}
-
-export const useSetting = create<SettingState>()(set => ({
-  setting: null,
-  setSetting: (setting: Theme) => set({ setting })
-}))
-
-export const useVersioning = create<VersionState>()(set => ({
+}>()(set => ({
   version: config.version ?? null,
   versions: sift(unique([config.version, ...pages.map(p => p.meta.version)])),
   isVersioned:
@@ -34,4 +32,12 @@ export const useVersioning = create<VersionState>()(set => ({
   setVersion: (version: string) => {
     set({ version })
   }
+}))
+
+export const useSearch = create<{
+  filter: string
+  setFilter: (filter: string) => void
+}>()(set => ({
+  filter: '',
+  setFilter: filter => set({ filter })
 }))

@@ -41,9 +41,10 @@ export type ChillerConfig = {
   sidebar: {
     links: ChillerLink[]
   }
-  search: {
-    type: 'pages' | 'algolia'
+  algolia: {
     key: string
+    index: string
+    id: string
   }
   footer: {
     links: ChillerLink[]

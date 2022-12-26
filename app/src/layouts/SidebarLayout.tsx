@@ -131,14 +131,13 @@ function Nav({
 
   const filtered = (n: Nav) => {
     const allPages = Object.values(n).flat()
-    const matchPages = filter
-      ? allPages
-      : allPages.filter(p => {
-          const content = sift([p.meta.title, p.meta.description])
-            .join(' ')
-            .toLowerCase()
-          return content.includes(filter.trim().toLowerCase())
-        })
+    const f = filter.trim().toLowerCase()
+    const matchPages = allPages.filter(p => {
+      return sift([p.meta.title, p.meta.description])
+        .join(' ')
+        .toLowerCase()
+        .includes(f)
+    })
     const groups = config.sidebar?.order
       ? (config.sidebar.order.filter(g =>
           matchPages.find(p => p.meta.group === g)

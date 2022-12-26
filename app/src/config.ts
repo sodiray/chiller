@@ -52,6 +52,7 @@ export type ChillerConfig = {
     'theme.icon.fill': string
     'theme.label': string
     'mdx.section.heading': string
+    'toc.section.title': string
   }
 }
 

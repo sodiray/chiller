@@ -74,7 +74,10 @@ export function DocsFooter({
               current?.meta.source ?? current?.href ?? ''
             }.mdx`}
           >
-            <a className="hover:text-slate-900 dark:hover:text-slate-400">
+            <a
+              className="hover:text-slate-900 dark:hover:text-slate-400"
+              target="_blank"
+            >
               Edit this page on GitHub
             </a>
           </Link>

@@ -381,6 +381,7 @@ export const create = (input: ColorStyle) => {
     'theme.icon.fill': `data-selected:fill-${style} dark:data-selected:fill-${style}`,
     'theme.icon.stroke': `data-selected:stroke-${style} dark:data-selected:stroke-${style}`,
     'theme.label': `data-selected:text-${style} dark:data-selected:text-${style}`,
+    'toc.section.title': `data-selected:text-${style} data-selected:dark:text-${style}`,
     primary
   }
 }

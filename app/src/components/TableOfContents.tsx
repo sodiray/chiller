@@ -1,7 +1,9 @@
 import clsx from 'clsx'
 import { Fragment, useContext } from 'react'
+import config from 'src/config'
 import { SidebarContext } from 'src/state'
 import type { TableOfContentsItem, TableOfContentsList } from 'src/types'
+import { twMerge } from 'tailwind-merge'
 
 export function TableOfContents({
   tableOfContents,
@@ -46,12 +48,14 @@ export function TableOfContents({
                 <a
                   href={`#${section.slug}`}
                   onClick={closeNav}
-                  className={clsx(
-                    'block py-1',
-                    pageHasSubsections ? 'font-medium' : '',
-                    isActive(section)
-                      ? 'font-medium text-sky-500 dark:text-sky-400'
-                      : 'hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-300'
+                  data-is-selected={isActive(section) ? 'true' : 'false'}
+                  className={twMerge(
+                    clsx(
+                      'block py-1',
+                      pageHasSubsections ? 'font-medium' : '',
+                      'data-selected:font-medium hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-300'
+                    ),
+                    config.theme?.['toc.section.title'] ?? ''
                   )}
                 >
                   {section.title}
@@ -65,11 +69,12 @@ export function TableOfContents({
                   <a
                     href={`#${subsection.slug}`}
                     onClick={closeNav}
-                    className={clsx(
-                      'group flex items-start py-1',
-                      isActive(subsection)
-                        ? 'text-sky-500 dark:text-sky-400'
-                        : 'hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-300'
+                    data-is-selected={isActive(subsection) ? 'true' : 'false'}
+                    className={twMerge(
+                      clsx(
+                        'group flex items-start py-1 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-300'
+                      ),
+                      config.theme?.['toc.section.title'] ?? ''
                     )}
                   >
                     <svg

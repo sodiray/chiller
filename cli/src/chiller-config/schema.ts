@@ -9,6 +9,8 @@ const schema = z.object({
   domain: z.string().optional(),
   index: z.string().optional(),
   description: z.string().optional(),
+  repo: z.string().optional(),
+  branch: z.string().optional(),
   pages: z.union([z.array(z.string()), z.string()]).transform(value => {
     return isArray(value) ? value : [value]
   }),
@@ -71,7 +73,8 @@ const schema = z.object({
         'theme.icon.stroke': z.string().optional(),
         'theme.icon.fill': z.string().optional(),
         'theme.label': z.string().optional(),
-        'mdx.section.heading': z.string().optional()
+        'mdx.section.heading': z.string().optional(),
+        'toc.section.title': z.string().optional()
       })
     ])
     .default(theme.create('blue-400'))

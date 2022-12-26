@@ -63,6 +63,7 @@ const schema = z.object({
         }, 'When theme is a string it must be a tailwind color name (green, blue, etc.), tailwind color (green-200, cyan-50, etc.), or a hex (#a3b, #fffa1, etc.)')
         .transform(style => theme.create(style as theme.ColorStyle)),
       z.object({
+        'primary': z.string().optional(),
         'sidebar.link': z.string().optional(),
         'sidebar.link.icon': z.string().optional(),
         'sidebar.group': z.string().optional(),

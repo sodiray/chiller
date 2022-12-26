@@ -42,10 +42,12 @@ export default function Document() {
           name="application-name"
           content={config.name}
         />
-        <meta
-          name="theme-color"
-          content={config.theme?.primary}
-        />
+        {config.theme?.primary && (
+          <meta
+            name="theme-color"
+            content={config.theme.primary}
+          />
+        )}
         <script
           dangerouslySetInnerHTML={{
             __html: `

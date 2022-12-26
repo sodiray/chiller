@@ -43,6 +43,7 @@ export type ChillerConfig = {
     links: ChillerLink[]
   }
   theme: {
+    primary: string
     'sidebar.link': string
     'sidebar.link.icon': string
     'sidebar.group': string

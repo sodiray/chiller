@@ -121,7 +121,10 @@ const DynamicNavLink = ({
           href="/docs/installation"
           target="_blank"
         >
-          <Icon icon={link.icon} />
+          <Icon
+            icon={link.icon as any}
+            size={20}
+          />
         </a>
       )
     }
@@ -139,7 +142,10 @@ const DynamicNavLink = ({
     return (
       <Link href="/docs/installation">
         <a className="hover:text-sky-500 dark:hover:text-sky-400">
-          <Icon icon={link.icon} />
+          <Icon
+            icon={link.icon as any}
+            size={20}
+          />
         </a>
       </Link>
     )

@@ -1,10 +1,12 @@
 {
-  "name": "Vessel",
+  "name": "Chiller",
   "favicon": "docs/favicon.png",
   "domain": "https://chiller-docs.vercel.app",
   "index": "docs/introduction",
   "theme": "blue-400",
-  "description": "A cutting edge documentation site generator ",
+  "description": "A cutting edge documentation site generator",
+  "repo": "https://github.com/rayepps/chiller",
+  "branch": "master",
   "logo": {
     "light": "docs/logo-light.png",
     "dark": "docs/logo-dark.png"

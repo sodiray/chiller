@@ -40,6 +40,7 @@ export type ChillerConfig = {
   }
   sidebar: {
     links: ChillerLink[]
+    order: string[]
   }
   algolia: {
     key: string

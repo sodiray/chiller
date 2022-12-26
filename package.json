@@ -4,6 +4,6 @@
     "docs:build": "chiller install && chiller sync && chiller build"
   },
   "dependencies": {
-    "chiller": "^1.0.0-rc.14"
+    "chiller": "^1.0.0-rc.15"
   }
 }

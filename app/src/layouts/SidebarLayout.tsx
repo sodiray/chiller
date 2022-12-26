@@ -2,7 +2,7 @@ import { Dialog } from '@headlessui/react'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { mapValues, sift } from 'radash'
+import { objectify, sift, unique } from 'radash'
 import { ChangeEventHandler, forwardRef, ReactNode, Ref, useRef } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { SearchButton } from 'src/components/Search'
@@ -129,20 +129,29 @@ function Nav({
 
   const navigation = nav(version ?? 'default')
 
-  const filtered = (n: Nav): Nav => {
-    if (!filter) return n
-    const filteredNav = mapValues(n, pages =>
-      pages.filter(p => {
-        const content = sift([p.meta.title, p.meta.description])
-          .join(' ')
-          .toLowerCase()
-        return content.includes(filter.trim().toLowerCase())
-      })
-    )
-    return Object.keys(filteredNav).reduce((acc, key) => {
-      const pages = filteredNav[key]
-      return pages.length > 0 ? { ...acc, [key]: pages } : acc
-    }, {} as Nav)
+  const filtered = (n: Nav) => {
+    const allPages = Object.values(n).flat()
+    const matchPages = filter
+      ? allPages
+      : allPages.filter(p => {
+          const content = sift([p.meta.title, p.meta.description])
+            .join(' ')
+            .toLowerCase()
+          return content.includes(filter.trim().toLowerCase())
+        })
+    const groups = config.sidebar?.order
+      ? (config.sidebar.order.filter(g =>
+          matchPages.find(p => p.meta.group === g)
+        ) as string[])
+      : unique(sift(matchPages.map(p => p.meta.group)))
+    return {
+      pages: objectify(
+        groups,
+        g => g,
+        g => matchPages.filter(p => p.meta.group === g)
+      ),
+      groups
+    }
   }
 
   const filteredNav = filtered(navigation)
@@ -160,21 +169,22 @@ function Nav({
       </div>
       <ul>
         <TopLevelNav mobile={mobile} />
-        {Object.keys(filteredNav)
-          .map(category => {
-            const pages = filteredNav[category]
+        {filteredNav.groups
+          .map(group => {
+            const filteredPages = filteredNav.pages[group]
             return (
               <li
-                key={category}
+                key={group}
                 className="mt-12 lg:mt-8"
               >
                 <h5
                   className={clsx('mb-8 lg:mb-3 font-semibold', {
-                    'text-slate-900 dark:text-slate-200': pages.length > 0,
-                    'text-slate-400': pages.length === 0
+                    'text-slate-900 dark:text-slate-200':
+                      filteredPages.length > 0,
+                    'text-slate-400': filteredPages.length === 0
                   })}
                 >
-                  {category}
+                  {group}
                 </h5>
                 <ul
                   className={clsx(
@@ -182,7 +192,7 @@ function Nav({
                     mobile ? 'dark:border-slate-700' : 'dark:border-slate-800'
                   )}
                 >
-                  {pages.map((item, i) => {
+                  {filteredPages.map((item, i) => {
                     const isActive = item.meta.match
                       ? new RegExp(item.meta.match).test(router.pathname)
                       : item.href === router.pathname

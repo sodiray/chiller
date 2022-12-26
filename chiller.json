@@ -10,6 +10,11 @@
   },
   "pages": "docs/**/*.mdx",
   "sidebar": {
+    "order": [
+      "Getting Started",
+      "API",
+      "CLI"
+    ],
     "links": [
       {
         "url": "/docs/introduction",

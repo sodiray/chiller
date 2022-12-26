@@ -35,7 +35,8 @@ const schema = z.object({
             label: z.string().optional()
           })
         )
-        .optional()
+        .optional(),
+      order: z.array(z.string()).optional()
     })
     .optional()
 })

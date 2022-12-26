@@ -12,10 +12,35 @@ type Services = {
 
 const install =
   ({ cmd, fse, cfg }: Services) =>
-  async ({ force }: { force: boolean }) => {
+  async ({ force, source }: { force: boolean; source: string | null }) => {
     // - Read chiller json file to ensure it
     //   exists in the current directory
     await cfg.read()
+
+    const Sourcer = {
+      github: async (tag: string) => {
+        // - Clone the rayepps/chiller repo into .chiller
+        await cmd('git clone https://github.com/rayepps/chiller.git .chiller')
+
+        // - Pull the tags
+        await cmd('git fetch --tags', {
+          cwd: path.join(process.cwd(), '.chiller')
+        })
+
+        // - Checkout the ref/tag matching the currently
+        //   installed chiller cli version
+        await cmd(`git checkout tags/${tag} -b working`, {
+          cwd: path.join(process.cwd(), '.chiller')
+        })
+      },
+      path: async (relativePath: string) => {
+        await fse.ensureDir(path.join(process.cwd(), '.chiller/app'))
+        await fse.copy(
+          path.join(process.cwd(), relativePath),
+          path.join(process.cwd(), '.chiller/app')
+        )
+      }
+    }
 
     const exists = await fse.pathExists('./.chiller')
     if (exists) {
@@ -26,19 +51,8 @@ const install =
     // - Create .chiller directory and enter it
     await fse.ensureDir('./.chiller')
 
-    // - Clone the rayepps/chiller repo into .chiller
-    await cmd('git clone https://github.com/rayepps/chiller.git .chiller')
-
-    // - Pull the tags
-    await cmd('git fetch --tags', {
-      cwd: path.join(process.cwd(), '.chiller')
-    })
-
-    // - Checkout the ref/tag matching the currently
-    //   installed chiller cli version
-    await cmd(`git checkout tags/${pkg.version} -b working`, {
-      cwd: path.join(process.cwd(), '.chiller')
-    })
+    if (source) await Sourcer.path(source)
+    else await Sourcer.github(pkg.version)
 
     // - Install dependencies. Force turn of production. In
     //   production mode yarn will not install the dev deps

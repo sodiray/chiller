@@ -11,7 +11,7 @@ type Services = {
 
 const build =
   ({ cmd, fse, cfg }: Services) =>
-  async ({ ci }: { ci: boolean }) => {
+  async () => {
     // - Read chiller json file to ensure it
     //   exists in the current directory
     await cfg.read()
@@ -21,16 +21,6 @@ const build =
     )
     if (!exists) {
       throw new Error('First run chiller install and chiller sync')
-    }
-
-    // - If in CI mode, install Next at the correct
-    //   version (matching the version the app uses)
-    //   so platforms like Vercel know what version
-    //   of next is being used. They can't see it
-    //   because we do the build down in the .chiller
-    //   directory.
-    if (ci) {
-      await cmd('yarn add --dev next@12.3.4')
     }
 
     // - Run the build

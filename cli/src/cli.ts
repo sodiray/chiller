@@ -24,24 +24,19 @@ program
 program
   .command('sync')
   .description('Authenticate with exobase to enable publish and deploy')
-  .action(async (args: { url: string }) => {
+  .action(async () => {
     console.log('🥶 syncing your files with your chiller app...')
     await sync()
   })
 
 program
   .command('build')
-  .option(
-    '--ci',
-    'Optional, tells the build to operate in ci mode. Useful when running build in Vercel',
-    false
-  )
   .description(
     'Initalize configuration for the project in the current directory'
   )
-  .action(async (args: { ci: boolean }) => {
+  .action(async () => {
     console.log('🥶 building your chiller app...')
-    await build(args)
+    await build()
   })
 
 program
@@ -51,10 +46,15 @@ program
     'Optional, go through install even if chiller app is already installed',
     false
   )
+  .option(
+    '--source [source]',
+    'Optional, override the default source to get the chiller app from. Should be a relative path to a directory containing the source files of the chiller app',
+    null
+  )
   .description(
     'Initalize configuration for the project in the current directory'
   )
-  .action(async (args: { force: boolean }) => {
+  .action(async (args: { force: boolean; source: string | null }) => {
     console.log('🥶 installing chiller app in .chiller directory...')
     await install(args)
   })

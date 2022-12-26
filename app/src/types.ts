@@ -25,4 +25,4 @@ export type Page = {
   href: string
 }
 
-export type Nav = Record<string, Page[]>
+export type NavTree = Record<string, Page[]>

@@ -1,17 +1,17 @@
-import { Dialog } from '@headlessui/react'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { objectify, sift, unique } from 'radash'
 import { ChangeEventHandler, forwardRef, ReactNode, Ref, useRef } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
+import { Icon } from 'src/components/Icon'
 import { SearchButton } from 'src/components/Search'
 import config from 'src/config'
 import { useActionKey } from 'src/hooks/useActionKey'
 import { useIsomorphicLayoutEffect } from 'src/hooks/useIsomorphicLayoutEffect'
 import { nav } from 'src/nav'
-import { SidebarContext, useSearch, useVersioning } from 'src/state'
-import type { Nav } from 'src/types'
+import { useSearch, useVersioning } from 'src/state'
+import type { NavTree } from 'src/types'
 import { twMerge } from 'tailwind-merge'
 
 const NavItem = forwardRef(
@@ -88,13 +88,13 @@ function nearestScrollableContainer(el?: Element) {
   return el
 }
 
-function Nav({
+export const Nav = ({
   fallbackHref,
   mobile = false
 }: {
   fallbackHref?: string
   mobile?: boolean
-}) {
+}) => {
   const router = useRouter()
   const activeItemRef = useRef<any>()
   const previousActiveItemRef = useRef<any>()
@@ -126,7 +126,7 @@ function Nav({
 
   const navigation = nav(version ?? 'default')
 
-  const filtered = (n: Nav) => {
+  const filtered = (n: NavTree) => {
     const allPages = Object.values(n).flat()
     const f = filter.trim().toLowerCase()
     const matchPages = allPages.filter(p => {
@@ -317,7 +317,6 @@ const TopLevelAnchor = forwardRef(
     {
       children,
       href,
-      className,
       icon,
       isActive,
       onClick,
@@ -325,7 +324,6 @@ const TopLevelAnchor = forwardRef(
     }: {
       children: ReactNode
       href: string
-      className: string
       icon: string
       isActive: boolean
       onClick?: () => void
@@ -341,10 +339,9 @@ const TopLevelAnchor = forwardRef(
           onClick={onClick}
           data-is-selected={isActive ? 'true' : 'false'}
           className={clsx(
-            'group flex items-center lg:text-sm lg:leading-6',
-            className,
+            'group flex items-center lg:text-sm lg:leading-6 mb-4',
             twMerge(
-              'data-selected:font-semibold data-selected:text-sky-500 data-selected:dark:text-sky-400 font-medium text-slate-700 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-300',
+              'data-selected:font-semibold font-medium text-slate-700 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-300',
               config.theme?.['sidebar.link'] ?? ''
             )
           )}
@@ -353,20 +350,16 @@ const TopLevelAnchor = forwardRef(
             data-is-selected={isActive ? 'true' : 'false'}
             className={twMerge(
               clsx(
-                'mr-4 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 dark:ring-0 dark:shadow-none dark:group-hover:shadow-none dark:group-hover:highlight-white/10',
-                'group-hover:shadow-sky-200 dark:group-hover:bg-sky-500',
-                'data-selected:dark:bg-sky-500 data-selected:dark:highlight-white/10 dark:bg-slate-800 dark:highlight-white/5'
+                'mr-4 p-1 rounded-md ring-1 ring-slate-900/5 shadow-sm group-hover:shadow group-hover:ring-slate-900/10 dark:ring-0 dark:shadow-none dark:group-hover:shadow-none dark:group-hover:highlight-white/10',
+                'group-hover:text-slate-50 dark:group-hover:text-slate-900 data-selected:dark:text-slate-900 data-selected:text-slate-50 data-selected:dark:highlight-white/10 dark:bg-slate-800 dark:highlight-white/5'
               ),
               config.theme?.['sidebar.link.icon'] ?? ''
             )}
           >
-            <svg
-              className="h-6 w-6"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              {icon}
-            </svg>
+            <Icon
+              icon={icon as any}
+              size={20}
+            />
           </div>
           {children}
         </a>
@@ -383,7 +376,6 @@ function TopLevelLink({
   href: string
   as?: string
   children: ReactNode
-  className: string
   icon: ReactNode
   isActive: boolean
   onClick?: () => void
@@ -420,174 +412,11 @@ function TopLevelNav({ mobile }: { mobile: boolean }) {
           mobile={mobile}
           href={link!.url ?? ''}
           isActive={pathname.startsWith(link!.url ?? '')}
-          className="mb-4"
-          icon={
-            <SidebarIcon
-              icon={link?.icon ?? 'book'}
-              active={pathname.startsWith(link!.url!)}
-            />
-          }
+          icon={link?.icon ?? 'book'}
         >
           {link!.label}
         </TopLevelLink>
       ))}
     </>
-  )
-}
-
-const SidebarIcon = ({
-  icon,
-  active
-}: {
-  icon: 'book' | 'code' | 'chat'
-  active: boolean
-}) => {
-  if (icon === 'book') {
-    return (
-      <>
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M8.5 7c1.093 0 2.117.27 3 .743V17a6.345 6.345 0 0 0-3-.743c-1.093 0-2.617.27-3.5.743V7.743C5.883 7.27 7.407 7 8.5 7Z"
-          className="fill-slate-100 group-hover:fill-slate-50 dark:fill-slate-800 dark:group-hover:fill-slate-900"
-        />
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M15.5 7c1.093 0 2.617.27 3.5.743V17c-.883-.473-2.407-.743-3.5-.743s-2.117.27-3 .743V7.743a6.344 6.344 0 0 1 3-.743Z"
-          className="fill-slate-200 group-hover:fill-slate-100 dark:fill-slate-700 dark:group-hover:fill-slate-800"
-        />
-      </>
-    )
-  }
-  if (icon === 'code') {
-    return (
-      <>
-        <path
-          d="M4 12a7 7 0 0 1 7-7h2a7 7 0 1 1 0 14h-2a7 7 0 0 1-7-7Z"
-          className="fill-white dark:fill-slate-900"
-        />
-        <path
-          d="M10.25 9.75 7.75 12l2.5 2.25"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="fill-slate-50 hover:fill-slate-100 dark:fill-slate-700 dark:hover:fill-slate-800"
-        />
-        <path
-          d="m13.75 9.75 2.5 2.25-2.5 2.25"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="fill-slate-50 hover:fill-slate-100 dark:fill-slate-700 dark:hover:fill-slate-800"
-        />
-      </>
-    )
-  }
-  if (icon === 'chat') {
-    return (
-      <>
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          data-is-selected={active ? 'true' : 'false'}
-          d="M11 5a6 6 0 0 0-4.687 9.746c.215.27.315.62.231.954l-.514 2.058a1 1 0 0 0 1.485 1.1l2.848-1.71c.174-.104.374-.15.576-.148H13a6 6 0 0 0 0-12h-2Z"
-          className="fill-white dark:fill-slate-900"
-        />
-        <circle
-          cx="12"
-          cy="11"
-          r="1"
-          className="fill-slate-50 hover:fill-slate-100 dark:fill-slate-700 dark:hover:fill-slate-800"
-        />
-        <circle
-          cx="9"
-          cy="11"
-          r="1"
-          className="fill-slate-50 hover:fill-slate-100 dark:fill-slate-700 dark:hover:fill-slate-800"
-        />
-        <circle
-          cx="15"
-          cy="11"
-          r="1"
-          className="fill-slate-50 hover:fill-slate-100 dark:fill-slate-700 dark:hover:fill-slate-800"
-        />
-      </>
-    )
-  }
-  return <></>
-}
-
-function Wrapper({
-  allowOverflow,
-  children
-}: {
-  allowOverflow: boolean
-  children: ReactNode
-}) {
-  return (
-    <div className={allowOverflow ? undefined : 'overflow-hidden'}>
-      {children}
-    </div>
-  )
-}
-
-export function SidebarLayout({
-  children,
-  navIsOpen,
-  setNavIsOpen,
-  fallbackHref,
-  allowOverflow = true
-}: {
-  children: ReactNode
-  navIsOpen: boolean
-  setNavIsOpen?: (navIsOpen: boolean) => void
-  fallbackHref?: string
-  allowOverflow?: boolean
-}) {
-  return (
-    <SidebarContext.Provider value={{ navIsOpen, setNavIsOpen }}>
-      <Wrapper allowOverflow={allowOverflow}>
-        <div className="max-w-8xl mx-auto px-4 sm:px-6 md:px-8">
-          <div className="hidden lg:block fixed z-20 inset-0 top-[3.8125rem] left-[max(0px,calc(50%-45rem))] right-auto w-[19.5rem] pb-10 px-8 overflow-y-auto">
-            <Nav fallbackHref={fallbackHref} />
-          </div>
-          <div className="lg:pl-[19.5rem]">{children}</div>
-        </div>
-      </Wrapper>
-      <Dialog
-        as="div"
-        open={navIsOpen}
-        onClose={() => setNavIsOpen?.(false)}
-        className="fixed z-50 inset-0 overflow-y-auto lg:hidden"
-      >
-        <Dialog.Overlay className="fixed inset-0 bg-black/20 backdrop-blur-sm dark:bg-slate-900/80" />
-        <div className="relative bg-white w-80 max-w-[calc(100%-3rem)] p-6 dark:bg-slate-800">
-          <button
-            type="button"
-            onClick={() => setNavIsOpen?.(false)}
-            className="absolute z-10 top-5 right-5 w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-300"
-          >
-            <span className="sr-only">Close navigation</span>
-            <svg
-              viewBox="0 0 10 10"
-              className="w-2.5 h-2.5 overflow-visible"
-            >
-              <path
-                d="M0 0L10 10M10 0L0 10"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-          </button>
-          <Nav
-            fallbackHref={fallbackHref}
-            mobile={true}
-          />
-        </div>
-      </Dialog>
-    </SidebarContext.Provider>
   )
 }

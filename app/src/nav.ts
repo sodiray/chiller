@@ -1,6 +1,6 @@
 import { objectify, sift, unique } from 'radash'
 import config from 'src/config'
-import { LayoutProps, Nav, Page } from 'src/types'
+import { LayoutProps, NavTree, Page } from 'src/types'
 
 const context = require.context(`./pages/`, true, /\.mdx$/)
 
@@ -49,7 +49,7 @@ const pagesByVersion = config.version
       default: pages
     }
 
-export const nav = (version: string): Nav => {
+export const nav = (version: string): NavTree => {
   return objectify(
     groups,
     g => g,

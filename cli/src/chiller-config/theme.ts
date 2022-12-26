@@ -93,7 +93,7 @@ export const create = (input: ColorStyle) => {
     return `${input}-400`
   })()
   return {
-    'mdx.section': `text-${style} dark:text-${style}`,
+    'mdx.section.heading': `text-${style} dark:text-${style}`,
     'sidebar.link': `hover:text-${style} dark:hover:text-${style} data-selected:text-${style} data-selected:dark:text-${style}`,
     'sidebar.link.icon': `group-hover:bg-${style} dark:group-hover:bg-${style} data-selected:bg-${style} dark:data-selected:bg-${style}`,
     'sidebar.group': `border-slate-300 dark:border-slate-800`,

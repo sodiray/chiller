@@ -1,7 +1,9 @@
 import clsx from 'clsx'
 import { useContext, useEffect, useRef } from 'react'
+import config from 'src/config'
 import { useTop } from 'src/hooks/useTop'
 import { ContentsContext } from 'src/state'
+import { twMerge } from 'tailwind-merge'
 
 export function Heading({
   level,
@@ -34,13 +36,20 @@ export function Heading({
 
   return (
     <Component
-      className={clsx('group flex whitespace-pre-wrap', className, {
-        '-ml-4 pl-4': !hidden,
-        'mb-2 text-sm leading-6 text-sky-500 font-semibold tracking-normal dark:text-sky-400':
-          level === 2 &&
+      className={twMerge(
+        clsx('group flex whitespace-pre-wrap', className, {
+          '-ml-4 pl-4': !hidden,
+          'mb-2 text-sm leading-6 font-semibold tracking-normal':
+            level === 2 &&
+            nextElement?.type === 'heading' &&
+            nextElement?.depth === 3
+        }),
+        (level === 2 &&
           nextElement?.type === 'heading' &&
-          nextElement?.depth === 3
-      })}
+          nextElement?.depth === 3 &&
+          config.theme?.['mdx.section.heading']) ??
+          ''
+      )}
       id={id}
       ref={ref}
       style={{ ...(hidden ? { marginBottom: 0 } : {}), ...style }}

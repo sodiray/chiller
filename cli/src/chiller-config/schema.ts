@@ -70,7 +70,7 @@ const schema = z.object({
         'theme.icon.stroke': z.string().optional(),
         'theme.icon.fill': z.string().optional(),
         'theme.label': z.string().optional(),
-        'mdx.section': z.string().optional()
+        'mdx.section.heading': z.string().optional()
       })
     ])
     .default(theme.create('blue-400'))

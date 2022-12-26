@@ -1,0 +1,42 @@
+---
+title: "Config"
+group: "API"
+---
+
+The `chiller.json` config file has the following properties.
+
+## name (required, string)
+
+The name of your application. This is used in the page title.
+
+## favicon (string)
+
+The favicon file to use for the site. A relative path from your chiller.json file.
+
+## domain (string)
+
+The absolute url where you expect your docs application to be deployed. The domain is used to build links.
+
+## description (string)
+
+Used in the `<meta>` for SEO
+
+## logo (string or object)
+
+Relative path to the logo file to use in the header. Can be a string or an object with a `light` and `dark` property where you specify a different logo for each theme.
+
+## pages (string or string[])
+
+A glob pattern string (or an array of glob strings) relative paths from your chiller.json config file that find all your documentaion pages. You can prefix a glob with `!` to filter those results out.
+
+```
+"pages": ["./**/*.md", "!./**/LICENSE.md"]
+```
+
+## sidebar
+
+An object describing how your sidebar should be layed out.
+
+## sidebar.links (array of links)
+
+Each link can have a `url`, `icon`, and `label` property.

@@ -1,0 +1,21 @@
+{
+  "name": "Vessel",
+  "favicon": "docs/favicon.png",
+  "domain": "https://chiller-docs.vercel.app",
+  "index": "docs/introduction",
+  "description": "A cutting edge documentation site generator ",
+  "logo": {
+    "light": "docs/logo-light.png",
+    "dark": "docs/logo-dark.png"
+  },
+  "pages": "docs/**/*.mdx",
+  "sidebar": {
+    "links": [
+      {
+        "url": "/docs/introduction",
+        "icon": "book",
+        "label": "Documentation"
+      }
+    ]
+  }
+}

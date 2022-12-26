@@ -9,6 +9,7 @@ coverage
 cli/**/chiller.json
 app/**/chiller.json
 app/public/*
+app/src/pages/docs
 
 # next.js
 .next

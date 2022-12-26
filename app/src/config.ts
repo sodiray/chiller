@@ -27,14 +27,6 @@ export type ChillerConfig = {
     light: string
     dark: string
   }
-  theme: {
-    primary: string
-    trim: string
-    fonts: {
-      header: string
-      body: string
-    }
-  }
   header: {
     links: ChillerLink[]
   }
@@ -49,6 +41,16 @@ export type ChillerConfig = {
   }
   footer: {
     links: ChillerLink[]
+  }
+  theme: {
+    'sidebar.link': string
+    'sidebar.link.icon': string
+    'sidebar.group': string
+    'sidebar.group.link': string
+    'theme.icon.stroke': string
+    'theme.icon.fill': string
+    'theme.label': string
+    'mdx.section': string
   }
 }
 

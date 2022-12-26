@@ -1,3 +1,6 @@
+import config from 'src/config'
+import { twMerge } from 'tailwind-merge'
+
 export function PageHeader({
   title,
   description,
@@ -20,7 +23,12 @@ export function PageHeader({
     >
       <div>
         {section && (
-          <p className="mb-2 text-sm leading-6 font-semibold text-sky-500 dark:text-sky-400">
+          <p
+            className={twMerge(
+              'mb-2 text-sm leading-6 font-semibold text-sky-500 dark:text-sky-400',
+              config.theme?.['mdx.section'] ?? ''
+            )}
+          >
             {section}
           </p>
         )}

@@ -1,3 +1,4 @@
+import { BsGithub } from 'react-icons/bs'
 import { HiOutlineBookOpen, HiOutlineChat, HiOutlineCode } from 'react-icons/hi'
 
 export const Icon = ({
@@ -5,7 +6,7 @@ export const Icon = ({
   className,
   size
 }: {
-  icon: 'book' | 'code' | 'chat'
+  icon: 'book' | 'code' | 'chat' | 'github'
   className?: string
   size: number
 }) => {
@@ -13,8 +14,7 @@ export const Icon = ({
     return (
       <HiOutlineBookOpen
         className={className}
-        height={size}
-        width={size}
+        size={size}
       />
     )
   }
@@ -22,8 +22,7 @@ export const Icon = ({
     return (
       <HiOutlineCode
         className={className}
-        height={size}
-        width={size}
+        size={size}
       />
     )
   }
@@ -31,10 +30,17 @@ export const Icon = ({
     return (
       <HiOutlineChat
         className={className}
-        height={size}
-        width={size}
+        size={size}
       />
     )
   }
-  return <></>
+  if (icon === 'github') {
+    return (
+      <BsGithub
+        className={className}
+        size={size}
+      />
+    )
+  }
+  return null
 }

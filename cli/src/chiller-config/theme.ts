@@ -382,6 +382,7 @@ export const create = (input: ColorStyle) => {
     'theme.icon.stroke': `data-selected:stroke-${style} dark:data-selected:stroke-${style}`,
     'theme.label': `data-selected:text-${style} dark:data-selected:text-${style}`,
     'toc.section.title': `data-selected:text-${style} data-selected:dark:text-${style}`,
+    'header.link': `hover:text-${style} dark:hover:text-${style}`,
     primary
   }
 }

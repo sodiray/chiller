@@ -42,6 +42,18 @@ const schema = z.object({
       order: z.array(z.string()).optional()
     })
     .optional(),
+  header: z.object({
+    links: z
+      .array(
+        z.object({
+          url: z.string(),
+          icon: z.string().optional(),
+          label: z.string().optional()
+        })
+      )
+      .optional(),
+    order: z.array(z.string()).optional()
+  }),
   theme: z
     .union([
       z
@@ -74,7 +86,8 @@ const schema = z.object({
         'theme.icon.fill': z.string().optional(),
         'theme.label': z.string().optional(),
         'mdx.section.heading': z.string().optional(),
-        'toc.section.title': z.string().optional()
+        'toc.section.title': z.string().optional(),
+        'header.link': z.string().optional()
       })
     ])
     .default(theme.create('blue-400'))

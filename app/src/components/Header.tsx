@@ -102,54 +102,37 @@ const DynamicNavLink = ({
 }: {
   link: { url: string; label?: string; button?: 'round-xl'; icon?: 'github' }
 }) => {
-  if (link.url.startsWith('/')) {
-    if (link.label) {
-      return (
-        <a
-          href="/docs/installation"
-          target="_blank"
-        >
-          <a className="hover:text-sky-500 dark:hover:text-sky-400">
-            {link.label}
-          </a>
-        </a>
-      )
-    }
-    if (link.icon) {
-      return (
-        <a
-          href="/docs/installation"
-          target="_blank"
-        >
+  if (!link.url.startsWith('/')) {
+    return (
+      <a
+        href={link.url}
+        target="_blank"
+        className={config.theme?.['header.link']}
+      >
+        {link.label && link.label}
+        {link.icon && (
           <Icon
-            icon={link.icon as any}
+            icon={link.icon}
             size={20}
           />
-        </a>
-      )
-    }
-  }
-  if (link.label) {
-    return (
-      <Link href="/docs/installation">
-        <a className="hover:text-sky-500 dark:hover:text-sky-400">
-          {link.label}
-        </a>
-      </Link>
+        )}
+      </a>
     )
   }
-  if (link.icon) {
-    return (
-      <Link href="/docs/installation">
-        <a className="hover:text-sky-500 dark:hover:text-sky-400">
+  return (
+    <Link href={link.url}>
+      <a className={config.theme?.['header.link']}>
+        {link.label && link.label}
+        {link.icon && (
           <Icon
-            icon={link.icon as any}
+            icon={link.icon}
             size={20}
           />
-        </a>
-      </Link>
-    )
-  }
+        )}
+      </a>
+    </Link>
+  )
+
   return null
 }
 
@@ -219,7 +202,7 @@ export function Header({
               <Link href="/">
                 <a className="mr-3 flex-none w-[2.0625rem] overflow-hidden md:w-auto">
                   <span className="sr-only">{config.name}</span>
-                  <Logo className="h-5 w-auto" />
+                  <Logo className="h-8 w-auto" />
                 </a>
               </Link>
               {isVersioned && <VersionSwitcher />}

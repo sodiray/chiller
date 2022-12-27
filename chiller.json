@@ -12,6 +12,12 @@
     "dark": "docs/logo-dark.png"
   },
   "pages": "docs/**/*.mdx",
+  "header": {
+    "links": [{
+      "url": "https://github.com/rayepps/chiller",
+      "icon": "github"
+    }]
+  },
   "sidebar": {
     "order": [
       "Getting Started",

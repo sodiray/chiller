@@ -358,7 +358,7 @@ const TopLevelAnchor = forwardRef(
           >
             <Icon
               icon={icon as any}
-              size={20}
+              size={18}
             />
           </div>
           {children}

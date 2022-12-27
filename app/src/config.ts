@@ -53,6 +53,7 @@ export type ChillerConfig = {
     'theme.label': string
     'mdx.section.heading': string
     'toc.section.title': string
+    'header.link': string
   }
 }
 

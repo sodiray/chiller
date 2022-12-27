@@ -295,7 +295,7 @@ const DynamicSearchButton = () => {
         </svg>
       </div>
       <input
-        className="pl-10 p-2.5 grow w-full rounded border border-slate-200 hover:border-slate-300"
+        className="pl-10 p-2.5 grow w-full rounded border border-slate-200 hover:border-slate-300 dark:border-slate-900 hover:dark:border-slate-800 dark:bg-slate-800"
         type="text"
         ref={ref}
         onChange={handleChange}

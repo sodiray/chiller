@@ -27,11 +27,7 @@ const schema = z.object({
       if (!value) return null
       if (isObject(value)) return value
       return { light: value, dark: value }
-    })
-    .transform(logo => ({
-      light: '/' + trim(logo.light, '/'),
-      dark: '/' + trim(logo.dark, '/')
-    })),
+    }),
   sidebar: z
     .object({
       links: z

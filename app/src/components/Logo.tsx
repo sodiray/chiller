@@ -1,3 +1,4 @@
+import { trim } from 'radash'
 import { useEffect, useMemo, useState } from 'react'
 import config from 'src/config'
 
@@ -41,7 +42,7 @@ export function Logo({ className }: { className: string }) {
   const logo = theme === 'light' ? config.logo!.light : config.logo!.dark
   return (
     <img
-      src={logo}
+      src={'/' + trim(logo, '/')}
       className={className}
     />
   )

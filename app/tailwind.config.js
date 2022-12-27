@@ -7,8 +7,8 @@ module.exports = {
     optimizeUniversalDefaults: true,
   },
   content: [
-    './src/**/*.{js,jsx,tsx,mdx,html}', 
-    './remark/**/*.js', 
+    './src/**/*.{js,jsx,tsx,mdx,html}',
+    './remark/**/*.js',
     './src/chiller.json'
   ],
   darkMode: 'class',

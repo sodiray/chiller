@@ -2,7 +2,7 @@ import { objectify, sift, unique } from 'radash'
 import config from 'src/config'
 import { LayoutProps, NavTree, Page } from 'src/types'
 
-const context = require.context(`./pages/`, true, /\.mdx$/)
+const context = require.context(`./pages/`, true, /\.mdx?$/)
 
 export const pages = context
   .keys()

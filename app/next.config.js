@@ -13,7 +13,7 @@ const defaultConfig = require('tailwindcss/resolveConfig')(require('tailwindcss/
 
 module.exports = withBundleAnalyzer({
   swcMinify: true,
-  pageExtensions: ['js', 'tsx', 'jsx', 'mdx'],
+  pageExtensions: ['js', 'tsx', 'jsx', 'mdx', 'md'],
   experimental: {
     esmExternals: false,
   },
@@ -62,7 +62,7 @@ module.exports = withBundleAnalyzer({
     })
 
     config.module.rules.push({
-      test: /\.mdx$/,
+      test: /\.mdx?$/,
       use: [
         options.defaultLoaders.babel,
 

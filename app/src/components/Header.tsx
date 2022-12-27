@@ -219,7 +219,7 @@ export function Header({
               <Link href="/">
                 <a className="mr-3 flex-none w-[2.0625rem] overflow-hidden md:w-auto">
                   <span className="sr-only">{config.name}</span>
-                  <Logo className="h-5 w-20" />
+                  <Logo className="h-5 w-auto" />
                 </a>
               </Link>
               {isVersioned && <VersionSwitcher />}

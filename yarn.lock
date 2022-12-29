@@ -29,10 +29,10 @@ chalk@4.1.2:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
-chiller@^1.0.0-rc.25:
-  version "1.0.0-rc.25"
-  resolved "https://registry.yarnpkg.com/chiller/-/chiller-1.0.0-rc.25.tgz#181ded5cc3355b3b403058d43617d59f95493771"
-  integrity sha512-cOXinhBOvlIQycQGRqL5/43rgxiCstG3hTj+SBMZEqZTMfORWWawKdobaiyxHsyVtiHbRmPY4CHE7LMcm3J8kQ==
+chiller@^1.0.0-rc.27:
+  version "1.0.0-rc.27"
+  resolved "https://registry.yarnpkg.com/chiller/-/chiller-1.0.0-rc.27.tgz#9f275b45ba6305126a03d4611bf712247b9415f3"
+  integrity sha512-o1ykedCKpa/+bsKUocXj9HHIwj1uXnor491yIUKq+aoyZW2bXokaat3CNOHu0UZELJUeq+0UdUCtYNJFFI2CMA==
   dependencies:
     chalk "4.1.2"
     cmdish "^1.1.0"

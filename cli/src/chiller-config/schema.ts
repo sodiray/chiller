@@ -53,7 +53,7 @@ const schema = z.object({
       )
       .optional(),
     order: z.array(z.string()).optional()
-  }),
+  }).optional(),
   theme: z
     .union([
       z

@@ -47,15 +47,22 @@ const sync =
       .map(p => path.join(process.cwd(), p))
     const targets = matches.filter(m => !ignored.includes(m))
 
+    const nonMarkdownTargets = targets.filter(t => !/\.mdx?$/.test(t))
+    if (nonMarkdownTargets.length > 0) {
+      throw new Error(
+        'Documentation files must be either .md or .mdx. Found: ' +
+          nonMarkdownTargets.join(', ')
+      )
+    }
+
     // - Generate the path for each file in
-    //   the .chiller dir.
+    //   the .chiller dir, always force
+    //   renaming them to .mdx extension
     const files = targets.map(filePath => ({
       source: filePath,
-      dest: path.join(
-        process.cwd(),
-        '.chiller/app/src/pages',
-        reducePath(filePath)
-      )
+      dest: path
+        .join(process.cwd(), '.chiller/app/src/pages', reducePath(filePath))
+        .replace(/\.md$/, '.mdx')
     }))
 
     // - Copy all the mdx files into the app directory

@@ -200,9 +200,9 @@ export function Header({
           >
             <div className="relative flex items-center">
               <Link href="/">
-                <a className="mr-3 flex-none w-[2.0625rem] overflow-hidden md:w-auto">
+                <a className="mr-3 flex-none overflow-hidden md:w-auto">
                   <span className="sr-only">{config.name}</span>
-                  <Logo className="h-8 w-auto" />
+                  <Logo className="h-6 md:h-8 w-auto" />
                 </a>
               </Link>
               {isVersioned && <VersionSwitcher />}

@@ -5,6 +5,7 @@ const { withTableOfContents } = require('./remark/withTableOfContents')
 const { withSyntaxHighlighting } = require('./remark/withSyntaxHighlighting')
 const { withNextLinks } = require('./remark/withNextLinks')
 const { withLinkRoles } = require('./rehype/withLinkRoles')
+const { withChillerImport } = require('./remark/withChillerImport')
 const cfg = require('./src/chiller.json')
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
@@ -85,6 +86,7 @@ module.exports = withBundleAnalyzer({
               withSyntaxHighlighting,
               withNextLinks,
               withSmartQuotes,
+              withChillerImport,
             ],
             rehypePlugins: [withLinkRoles],
           }

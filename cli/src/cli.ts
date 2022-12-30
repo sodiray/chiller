@@ -29,9 +29,14 @@ program
     "Optional, override the default destination to sync the current directory into a different chiller directory. Should be a relative path to a directory containing the chiller app's source files of the chiller app",
     './.chiller/app'
   )
-  .action(async ({ dest }: { dest: string }) => {
+  .option(
+    '-w, --watch',
+    "Optional, if set process will stay open and re-execute when files change",
+    false
+  )
+  .action(async ({ dest, watch }: { dest: string; watch: boolean }) => {
     console.log('🥶 syncing your files with your chiller app...')
-    await sync({ dest })
+    await sync({ dest, watch })
   })
 
 program

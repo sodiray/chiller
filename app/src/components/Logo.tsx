@@ -7,10 +7,8 @@ export function Logo({ className }: { className: string }) {
 
   const updateTheme = () => {
     const isDark = document.documentElement.classList.contains('dark')
-    // console.log('x--> isDark:', isDark)
     if (isDark && theme === 'dark') return
     if (!isDark && theme === 'light') return
-    // console.log('x--> changing theme: ', isDark ? 'dark' : 'light')
     setTheme(isDark ? 'dark' : 'light')
   }
 

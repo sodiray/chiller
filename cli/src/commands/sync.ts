@@ -1,3 +1,4 @@
+import chokidar from 'chokidar'
 import cmd from 'cmdish'
 import fse from 'fs-extra'
 import glob from 'glob'
@@ -13,7 +14,13 @@ type Services = {
 
 const sync =
   ({ cmd, fse, cfg }: Services) =>
-  async ({ dest = './.chiller/app' }: { dest?: string }) => {
+  async ({
+    dest = './.chiller/app',
+    watch
+  }: {
+    dest?: string
+    watch: boolean
+  }) => {
     // - Ensure .chiller is installed
     const installed = fse.pathExists(
       path.join(process.cwd(), dest, 'node_modules')
@@ -35,55 +42,64 @@ const sync =
       path.join(process.cwd(), dest, 'src/chiller.json'),
       config
     )
+    const doSync = async () => {
+      // - Find all mdx files that match the config
+      //   glob. Find all matching and ignored
+      //   files then diff to get the target files.
+      const matches = config.pages
+        .filter(p => !p.startsWith('!'))
+        .flatMap(p => glob.sync(p))
+        .map(p => path.join(process.cwd(), p))
+      const ignored = config.pages
+        .filter(p => p.startsWith('!'))
+        .map(p => trim(p, '!'))
+        .flatMap(p => glob.sync(p))
+        .map(p => path.join(process.cwd(), p))
+      const targets = matches.filter(m => !ignored.includes(m))
 
-    // - Find all mdx files that match the config
-    //   glob. Find all matching and ignored
-    //   files then diff to get the target files.
-    const matches = config.pages
-      .filter(p => !p.startsWith('!'))
-      .flatMap(p => glob.sync(p))
-      .map(p => path.join(process.cwd(), p))
-    const ignored = config.pages
-      .filter(p => p.startsWith('!'))
-      .map(p => trim(p, '!'))
-      .flatMap(p => glob.sync(p))
-      .map(p => path.join(process.cwd(), p))
-    const targets = matches.filter(m => !ignored.includes(m))
+      const nonMarkdownTargets = targets.filter(t => !/\.mdx?$/.test(t))
+      if (nonMarkdownTargets.length > 0) {
+        throw new Error(
+          'Documentation files must be either .md or .mdx. Found: ' +
+            nonMarkdownTargets.join(', ')
+        )
+      }
 
-    const nonMarkdownTargets = targets.filter(t => !/\.mdx?$/.test(t))
-    if (nonMarkdownTargets.length > 0) {
-      throw new Error(
-        'Documentation files must be either .md or .mdx. Found: ' +
-          nonMarkdownTargets.join(', ')
+      // - Generate the path for each file in
+      //   the .chiller dir, always force
+      //   renaming them to .mdx extension
+      const files = targets.map(filePath => ({
+        source: filePath,
+        dest: path
+          .join(process.cwd(), dest, 'src/pages', reducePath(filePath))
+          .replace(/\.md$/, '.mdx')
+      }))
+
+      // - Copy all the mdx files into the app directory
+      await parallel(5, files, async ({ source, dest }) => {
+        await fse.ensureDir(path.dirname(dest))
+        await fse.copyFile(source, dest)
+      })
+
+      // - Copy all the static files (images) into the
+      //   .chiller public directory
+      const images = sift(
+        unique([config.logo.light, config.logo.dark, config.favicon])
       )
+      for (const img of images) {
+        await fse.ensureDir(
+          path.dirname(path.join(process.cwd(), dest, 'public', img))
+        )
+        await fse.copyFile(img, path.join(process.cwd(), dest, 'public', img))
+      }
     }
 
-    // - Generate the path for each file in
-    //   the .chiller dir, always force
-    //   renaming them to .mdx extension
-    const files = targets.map(filePath => ({
-      source: filePath,
-      dest: path
-        .join(process.cwd(), dest, 'src/pages', reducePath(filePath))
-        .replace(/\.md$/, '.mdx')
-    }))
-
-    // - Copy all the mdx files into the app directory
-    await parallel(5, files, async ({ source, dest }) => {
-      await fse.ensureDir(path.dirname(dest))
-      await fse.copyFile(source, dest)
-    })
-
-    // - Copy all the static files (images) into the
-    //   .chiller public directory
-    const images = sift(
-      unique([config.logo.light, config.logo.dark, config.favicon])
-    )
-    for (const img of images) {
-      await fse.ensureDir(
-        path.dirname(path.join(process.cwd(), dest, 'public', img))
-      )
-      await fse.copyFile(img, path.join(process.cwd(), dest, 'public', img))
+    if (watch) {
+      chokidar
+        .watch(config.pages.filter(p => !p.startsWith('!')))
+        .on('all', doSync)
+    } else {
+      await doSync()
     }
   }
 

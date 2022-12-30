@@ -1,6 +1,6 @@
 {
   "name": "chiller",
-  "version": "1.0.0-rc.27",
+  "version": "1.0.0-rc.28",
   "description": "Chillder docs CLI",
   "license": "MIT",
   "author": "Ray Epps <ray@unishine.dev>",
@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "chalk": "4.1.2",
+    "chokidar": "^3.5.3",
     "cmdish": "^1.1.0",
     "commander": "^9.4.1",
     "fs-extra": "^11.1.0",

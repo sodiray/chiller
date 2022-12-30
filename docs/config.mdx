@@ -1,46 +1,119 @@
 ---
 title: "Config"
-group: "API"
+group: "Getting Started"
 ---
 
 The `chiller.json` config file has the following properties.
 
-## name (required, string)
+<Chiller.Option
+  name="name"
+  type="string"
+  description="The name of your application. This is used in the page title."
+  required
+/>
 
-The name of your application. This is used in the page title.
+<Chiller.Option
+  name="favicon"
+  type="string:path"
+  description="The favicon file to use for the site. A relative path from your chiller.json file."
+/>
 
-## favicon (string)
+<Chiller.Option
+  name="domain"
+  type="string:url"
+  description="The absolute url where you expect your docs application to be deployed. The domain is used to build links."
+/>
 
-The favicon file to use for the site. A relative path from your chiller.json file.
+<Chiller.Option
+  name="description"
+  type="string"
+  description="Used in the meta for SEO"
+/>
 
-## domain (string)
+<Chiller.Option
+  name="logo"
+  type="string | object"
+  description="Relative path to the logo file to use in the header. Can be a string or an
+  object with a `light` and `dark` property where you specify a different logo
+  for each theme."
+>
+  <Chiller.Option
+    name="light"
+    type="string:path"
+    description="Path to the logo that should be used when in light mode."
+  />
+  <Chiller.Option
+    name="dark"
+    type="string:path"
+    description="Path to the logo that should be used when in dark mode."
+  />
+</Chiller.Option>
 
-The absolute url where you expect your docs application to be deployed. The domain is used to build links.
+<Chiller.Option
+  name="pages"
+  type="string | string[]"
+  description="A glob pattern string (or an array of glob strings) relative paths from your chiller.json config file that find all your documentaion pages. You can prefix a glob with `!` to filter those results out."
+/>
 
-## description (string)
+<Chiller.Option
+  name="sidebar"
+  type="object"
+  description="An object describing how your sidebar should be layed out."
+>
+  <Chiller.Option
+    name="order"
+    type="string[]"
+    description="If specified, should be a list of all sidebar groups in the order you want them displayed."
+  />
+  <Chiller.Option
+    name="links"
+    type="object[]"
+    description="Each link can have a `url`, `icon`, and `label` property."
+  >
+    <Chiller.Option
+      required
+      name="url"
+      type="string:url"
+      description="Target address to link to"
+    />
+    <Chiller.Option
+      name="icon"
+      type="string"
+      description="One of github, book, code, or chat"
+    />
+    <Chiller.Option
+      name="label"
+      type="string"
+      description="If provided, the text shows in the link"
+    />
+  </Chiller.Option>
+</Chiller.Option>
 
-Used in the `<meta>` for SEO
-
-## logo (string or object)
-
-Relative path to the logo file to use in the header. Can be a string or an object with a `light` and `dark` property where you specify a different logo for each theme.
-
-## pages (string or string[])
-
-A glob pattern string (or an array of glob strings) relative paths from your chiller.json config file that find all your documentaion pages. You can prefix a glob with `!` to filter those results out.
-
-```
-"pages": ["./**/*.md", "!./**/LICENSE.md"]
-```
-
-## sidebar
-
-An object describing how your sidebar should be layed out.
-
-## sidebar.links (array of links)
-
-Each link can have a `url`, `icon`, and `label` property.
-
-## sidebar.order (string[])
-
-If specified, should be a list of all sidebar groups in the order you want them displayed.
+<Chiller.Option
+  name="header"
+  type="object"
+  description="An object describing how your header should be layed out."
+>
+  <Chiller.Option
+    name="links"
+    type="object[]"
+    description="Each link can have a `url`, `icon`, and `label` property."
+  >
+    <Chiller.Option
+      required
+      name="url"
+      type="string:url"
+      description="Target address to link to"
+    />
+    <Chiller.Option
+      name="icon"
+      type="string"
+      description="One of github, book, code, or chat"
+    />
+    <Chiller.Option
+      name="label"
+      type="string"
+      description="If provided, the text shows in the link"
+    />
+  </Chiller.Option>
+</Chiller.Option>

@@ -112,6 +112,14 @@ module.exports.addImport = function addImport(tree, mod, name) {
   return `_${name}`
 }
 
+module.exports.addNamedImport = function addImport(tree, mod, name) {
+  tree.children.unshift({
+    type: 'import',
+    value: `import { ${name} } from '${mod}'`,
+  })
+  return name
+}
+
 module.exports.addDefaultImport = function addImport(tree, mod, name) {
   tree.children.unshift({
     type: 'import',

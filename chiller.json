@@ -21,7 +21,7 @@
   "sidebar": {
     "order": [
       "Getting Started",
-      "API",
+      "Components",
       "CLI"
     ],
     "links": [

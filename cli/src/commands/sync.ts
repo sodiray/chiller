@@ -13,13 +13,16 @@ type Services = {
 
 const sync =
   ({ cmd, fse, cfg }: Services) =>
-  async () => {
+  async ({ dest = './.chiller/app' }: { dest?: string }) => {
     // - Ensure .chiller is installed
     const installed = fse.pathExists(
-      path.join(process.cwd(), '.chiller/app/node_modules')
+      path.join(process.cwd(), dest, 'node_modules')
     )
     if (!installed) {
-      throw new Error('Local .chiller does not exist. Run chiller install')
+      throw new Error(
+        `Directory ${path.join(dest, 'node_modules')} does not exist. ` +
+          'You probably need to run chiller install'
+      )
     }
 
     // - Read chiller json file to ensure it
@@ -29,7 +32,7 @@ const sync =
     // - Write the chiller config file into the
     //   .chiller directory
     await fse.writeJson(
-      path.join(process.cwd(), '.chiller/app/src/chiller.json'),
+      path.join(process.cwd(), dest, 'src/chiller.json'),
       config
     )
 
@@ -61,7 +64,7 @@ const sync =
     const files = targets.map(filePath => ({
       source: filePath,
       dest: path
-        .join(process.cwd(), '.chiller/app/src/pages', reducePath(filePath))
+        .join(process.cwd(), dest, 'src/pages', reducePath(filePath))
         .replace(/\.md$/, '.mdx')
     }))
 
@@ -78,12 +81,9 @@ const sync =
     )
     for (const img of images) {
       await fse.ensureDir(
-        path.dirname(path.join(process.cwd(), '.chiller/app/public', img))
+        path.dirname(path.join(process.cwd(), dest, 'public', img))
       )
-      await fse.copyFile(
-        img,
-        path.join(process.cwd(), '.chiller/app/public', img)
-      )
+      await fse.copyFile(img, path.join(process.cwd(), dest, 'public', img))
     }
   }
 

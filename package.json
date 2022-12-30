@@ -1,9 +1,6 @@
 {
   "scripts": {
     "docs:install": "yarn && yarn add next@12.3.4",
-    "docs:build": "chiller install && chiller sync && chiller build"
-  },
-  "dependencies": {
-    "chiller": "^1.0.0-rc.27"
+    "docs:build": "chiller install --source ./app && chiller sync && chiller build"
   }
 }

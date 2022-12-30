@@ -24,9 +24,14 @@ program
 program
   .command('sync')
   .description('Authenticate with exobase to enable publish and deploy')
-  .action(async () => {
+  .option(
+    '-d, --dest [destination]',
+    "Optional, override the default destination to sync the current directory into a different chiller directory. Should be a relative path to a directory containing the chiller app's source files of the chiller app",
+    './.chiller/app'
+  )
+  .action(async ({ dest }: { dest: string }) => {
     console.log('🥶 syncing your files with your chiller app...')
-    await sync()
+    await sync({ dest })
   })
 
 program

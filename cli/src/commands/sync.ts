@@ -96,7 +96,10 @@ const sync =
 
     if (watch) {
       chokidar
-        .watch(config.pages.filter(p => !p.startsWith('!')))
+        .watch([
+          ...config.pages.filter(p => !p.startsWith('!')),
+          'chiller.json'
+        ])
         .on('all', doSync)
     } else {
       await doSync()

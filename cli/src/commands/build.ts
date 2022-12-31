@@ -2,6 +2,8 @@ import cmd from 'cmdish'
 import fse from 'fs-extra'
 import path from 'path'
 import cfg from '../chiller-config'
+import install from './install'
+import sync from './sync'
 
 type Services = {
   cmd: typeof cmd
@@ -9,12 +11,17 @@ type Services = {
   cfg: typeof cfg
 }
 
-const build =
+export const build =
   ({ cmd, fse, cfg }: Services) =>
-  async () => {
+  async ({ ci }: { ci: boolean }) => {
     // - Read chiller json file to ensure it
     //   exists in the current directory
     await cfg.read()
+
+    if (ci) {
+      await install({ force: true })
+      await sync({})
+    }
 
     const exists = await fse.pathExists(
       path.join(process.cwd(), '.chiller/app/node_modules')

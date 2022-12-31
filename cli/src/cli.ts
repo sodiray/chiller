@@ -44,9 +44,14 @@ program
   .description(
     'Initalize configuration for the project in the current directory'
   )
-  .action(async () => {
+  .option(
+    '--ci',
+    "Optional, if set the build will force install and sync before running build",
+    false
+  )
+  .action(async ({ ci }: { ci: boolean }) => {
     console.log('🥶 building your chiller app...')
-    await build()
+    await build({ ci })
   })
 
 program
@@ -58,13 +63,12 @@ program
   )
   .option(
     '--source [source]',
-    'Optional, override the default source to get the chiller app from. Should be a relative path to a directory containing the source files of the chiller app',
-    null
+    'Optional, override the default source to get the chiller app from. Should be a relative path to a directory containing the source files of the chiller app'
   )
   .description(
     'Initalize configuration for the project in the current directory'
   )
-  .action(async (args: { force: boolean; source: string | null }) => {
+  .action(async (args: { force: boolean; source?: string }) => {
     console.log('🥶 installing chiller app in .chiller directory...')
     await install(args)
   })

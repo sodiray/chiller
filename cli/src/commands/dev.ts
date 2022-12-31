@@ -9,7 +9,7 @@ type Services = {
   cfg: typeof cfg
 }
 
-const dev =
+export const dev =
   ({ cmd, fse, cfg }: Services) =>
   async () => {
     // - Read chiller json file to ensure it

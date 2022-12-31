@@ -12,14 +12,14 @@ type Services = {
   fse: typeof fse
 }
 
-const sync =
+export const sync =
   ({ cmd, fse, cfg }: Services) =>
   async ({
     dest = './.chiller/app',
-    watch
+    watch = false
   }: {
     dest?: string
-    watch: boolean
+    watch?: boolean
   }) => {
     // - Ensure .chiller is installed
     const installed = fse.pathExists(

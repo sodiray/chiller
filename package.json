@@ -1,6 +1,6 @@
 {
   "scripts": {
     "docs:install": "yarn && yarn add next@12.3.4 && cd cli && yarn && yarn install-local",
-    "docs:build": "chiller install --source ./app && chiller sync && chiller build"
+    "docs:build": "chiller build --ci"
   }
 }

@@ -10,15 +10,15 @@ type Services = {
   cfg: typeof cfg
 }
 
-const install =
+export const install =
   ({ cmd, fse, cfg }: Services) =>
-  async ({ force, source }: { force: boolean; source: string | null }) => {
+  async ({ force = false, source }: { force?: boolean; source?: string }) => {
     // - Read chiller json file to ensure it
     //   exists in the current directory
     await cfg.read()
 
     const Sourcer = {
-      github: async (tag: string) => {
+      github: async (version: string) => {
         // - Clone the rayepps/chiller repo into .chiller
         await cmd('git clone https://github.com/rayepps/chiller.git .chiller')
 
@@ -29,7 +29,7 @@ const install =
 
         // - Checkout the ref/tag matching the currently
         //   installed chiller cli version
-        await cmd(`git checkout tags/${tag} -b working`, {
+        await cmd(`git checkout tags/${version} -b ${version}`, {
           cwd: path.join(process.cwd(), '.chiller')
         })
       },

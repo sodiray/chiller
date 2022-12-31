@@ -4,7 +4,7 @@ import create from 'zustand'
 import config from './config'
 import { pages } from './nav'
 
-// TODO: Remove context and go all 
+// TODO: Remove context and go all
 // in with zustand
 
 export const ContentsContext = createContext({})
@@ -21,14 +21,10 @@ export const useSetting = create<{
 export const useVersioning = create<{
   version: string | null
   versions: string[]
-  isVersioned: boolean
   setVersion: (version: string) => void
 }>()(set => ({
   version: config.version ?? null,
-  versions: sift(unique([config.version, ...pages.map(p => p.meta.version)])),
-  isVersioned:
-    sift(unique([config.version, ...pages.map(p => p.meta.version)])).length >
-    1,
+  versions: unique(sift([config.version, ...pages.map(p => p.meta.version)])),
   setVersion: (version: string) => {
     set({ version })
   }

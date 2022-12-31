@@ -6,27 +6,33 @@ import { useVersioning } from 'src/state'
 export function VersionSwitcher({ className = '' }: { className?: string }) {
   const { version, versions, setVersion } = useVersioning()
   const router = useRouter()
+  const isMultiVersion = versions.length > 1
   return (
     <Menu
       as="div"
       className={clsx(className, 'relative')}
     >
-      <Menu.Button className="text-xs leading-5 font-semibold bg-slate-400/10 rounded-full py-1 px-3 flex items-center space-x-2 hover:bg-slate-400/20 dark:highlight-white/5">
+      <Menu.Button
+        disabled={!isMultiVersion}
+        className="text-xs leading-5 font-semibold bg-slate-400/10 rounded-full py-1 px-3 flex items-center space-x-2 hover:bg-slate-400/20 dark:highlight-white/5"
+      >
         {version}
-        <svg
-          width="6"
-          height="3"
-          className="ml-2 overflow-visible"
-          aria-hidden="true"
-        >
-          <path
-            d="M0 0L3 3L6 0"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-        </svg>
+        {isMultiVersion && (
+          <svg
+            width="6"
+            height="3"
+            className="ml-2 overflow-visible"
+            aria-hidden="true"
+          >
+            <path
+              d="M0 0L3 3L6 0"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+          </svg>
+        )}
       </Menu.Button>
       <Menu.Items className="absolute top-full mt-1 py-2 w-40 rounded-lg bg-white shadow ring-1 ring-slate-900/5 text-sm leading-6 font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:highlight-white/5">
         {versions.map(v =>

@@ -160,7 +160,7 @@ export function Header({
   section: string
 }) {
   let [isOpaque, setIsOpaque] = useState(false)
-  const { versions, isVersioned } = useVersioning()
+  const { version } = useVersioning()
 
   useEffect(() => {
     let offset = 50
@@ -205,7 +205,7 @@ export function Header({
                   <Logo className="h-6 md:h-8 w-auto" />
                 </a>
               </Link>
-              {isVersioned && <VersionSwitcher />}
+              {version && <VersionSwitcher />}
               <div className="relative hidden lg:flex items-center ml-auto justify-end w-full">
                 <nav className="text-sm leading-6 font-semibold text-slate-700 dark:text-slate-200">
                   <ul className="flex space-x-8">

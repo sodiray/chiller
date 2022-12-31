@@ -1,0 +1,15 @@
+---
+group: "Getting Started"
+title: "Versioning"
+---
+
+To enable versioning:
+
+1. Set the `version` property in your chiller.json. This will be the default version loaded and displayed in the header. If you simply want to show the current version you can set this property and do nothing else.
+
+2. In each versioned `.mdx` documentation file add a `version` property to the front matter.
+
+Versioning works via a simple override design.
+- If a file does not have a version it will be displayed on all versions. 
+- If a file has a version it will only be displayed when that version is selected.
+- Documenation files are uniquely identified by the `group` + `title` front matter. When there are more than one files with the same `group` + `title` the one with the current version is used.

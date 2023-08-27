@@ -79,7 +79,7 @@ export function DocsFooter({
         </div>
         {config.repo && (
           <Link
-            href={`${config.repo}/edit/${config.branch ?? 'main'}/src/pages${
+            href={`${config.repo}/edit/${config.branch ?? 'main'}${
               current?.meta.source ?? current?.href ?? ''
             }.mdx`}
           >
